@@ -33,7 +33,7 @@ uploaded_file = st.file_uploader("Upload a plant leaf image", type=["jpg", "jpeg
 
 if uploaded_file is not None:
     image = Image.open(uploaded_file)
-    st.image(image, caption="Uploaded Image", use_column_width=True)
+    st.image(image, caption="Uploaded Image", use_container_width=True)
 
     # Extract features & predict
     features = extract_features_from_pil(image).reshape(1, -1)
