@@ -6,7 +6,7 @@ A powerful web app for classifying plant leaf diseases using handcrafted feature
 
 ## 🚀 Live Demo
 
-*[🔗 Click here to try the app]([https://your-streamlit-app-url](https://plant-disease-app-2tgkxm6oc3d5r3wcuvxwgd.streamlit.app/)) *
+*[🔗 Click here to try the app](https://plant-disease-app-2tgkxm6oc3d5r3wcuvxwgd.streamlit.app/) *
 
 ---
 
