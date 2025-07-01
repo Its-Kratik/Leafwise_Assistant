@@ -6,7 +6,7 @@ A powerful web app for classifying plant leaf diseases using handcrafted feature
 
 ## 🚀 Live Demo
 
-[🔗 Click here to try the app]([https://your-streamlit-app-url](https://plant-disease-app-2tgkxm6oc3d5r3wcuvxwgd.streamlit.app/)) *
+*[🔗 Click here to try the app]([https://your-streamlit-app-url](https://plant-disease-app-2tgkxm6oc3d5r3wcuvxwgd.streamlit.app/)) *
 
 ---
 
@@ -113,7 +113,7 @@ MIT License *(add LICENSE file if missing)*
 ## 🙋‍♂️ Author
 
 **Kratik Jain**
-🌐 [LinkedIn](https://linkedin.com/in/your-profile)
+🌐 [LinkedIn]([https://linkedin.com/in/your-profile](https://www.linkedin.com/in/kratik-jain12/))
 💌 Email: [kratikjain121@email.com](mailto:kratikjain121@email.com)
 
 ---
