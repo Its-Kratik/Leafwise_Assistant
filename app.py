@@ -23,7 +23,6 @@ models = {
 label_map = {0: 'Healthy', 1: 'Multiple Diseases', 2: 'Rust', 3: 'Scab'}
 
 # Feature Extraction
-@st.cache_data
 def extract_features(pil_img):
     img = np.array(pil_img.resize((128, 128)))
     img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
@@ -57,7 +56,7 @@ def show_detection():
     uploaded_file = st.file_uploader("Upload a plant leaf image", type=["jpg", "png", "jpeg"], key="detect")
     if uploaded_file:
         image = Image.open(uploaded_file)
-        st.image(image, caption="Uploaded Leaf", use_column_width=True)
+        st.image(image, caption=\"Uploaded Leaf\", use_container_width=True)
         features = extract_features(image).reshape(1, -1)
         model = models["Voting Ensemble"]
         prediction = model.predict(features)[0]
@@ -74,7 +73,7 @@ def show_classification():
     uploaded_file = st.file_uploader("Upload a plant leaf image", type=["jpg", "png", "jpeg"], key="classify")
     if uploaded_file:
         image = Image.open(uploaded_file)
-        st.image(image, caption="Uploaded Leaf", use_column_width=True)
+        st.image(image, caption=\"Uploaded Leaf\", use_container_width=True)
         features = extract_features(image).reshape(1, -1)
         prediction = model.predict(features)[0]
         probs = model.predict_proba(features)[0]
