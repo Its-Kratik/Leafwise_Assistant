@@ -7,3 +7,4 @@ Pillow
 joblib
 scikit-image
 matplotlib
+seaborn
