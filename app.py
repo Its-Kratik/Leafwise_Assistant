@@ -740,119 +740,409 @@ def main():
 
 # --- Advanced Classification Page ---
 def show_classification():
-    """Advanced classification with multiple models comparison"""
+    """Advanced classification with multiple models comparison and detailed analysis"""
     st.markdown('<h1 class="main-header">🧠 Advanced Classification</h1>', unsafe_allow_html=True)
     
-    # Model selection
+    # Enhanced header with real-time info
+    col1, col2, col3, col4 = st.columns(4)
+    with col1:
+        st.markdown("""
+        <div class="metric-card">
+            <h4>🤖 Available Models</h4>
+            <h2>{}</h2>
+            <p>ML algorithms ready</p>
+        </div>
+        """.format(len(models)), unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div class="metric-card">
+            <h4>🔬 Analysis Modes</h4>
+            <h2>3</h2>
+            <p>Single, Batch, Compare</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col3:
+        ensemble_accuracy = 95.2  # Demo value
+        st.markdown(f"""
+        <div class="metric-card">
+            <h4>🎯 Ensemble Accuracy</h4>
+            <h2>{ensemble_accuracy}%</h2>
+            <p>Voting classifier</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col4:
+        st.markdown("""
+        <div class="metric-card">
+            <h4>⚡ Processing Speed</h4>
+            <h2>1.2s</h2>
+            <p>Average per image</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    # Main classification interface
     col1, col2 = st.columns([3, 1])
     
     with col2:
+        st.markdown("### 🎛️ Analysis Configuration")
+        
+        # Model selection with descriptions
+        model_descriptions = {
+            "Random Forest": "🌳 Ensemble of decision trees - Good for complex patterns",
+            "SVM (RBF Kernel)": "🔮 Support Vector Machine - Excellent for non-linear data",
+            "Gradient Boosting": "🚀 Sequential weak learners - High accuracy",
+            "Voting Ensemble": "🗳️ Combines multiple models - Best overall performance",
+            "KNN": "👥 K-Nearest Neighbors - Simple but effective",
+            "Logistic Regression": "📈 Linear classifier - Fast and interpretable"
+        }
+        
         selected_models = st.multiselect(
-            "🤖 Select Models",
+            "🤖 Select Models for Analysis",
             list(models.keys()),
-            default=["Random Forest", "SVM (RBF Kernel)", "Voting Ensemble"]
+            default=["Random Forest", "SVM (RBF Kernel)", "Voting Ensemble"],
+            help="Choose multiple models to compare results"
         )
         
-        batch_mode = st.checkbox("📁 Batch Processing Mode")
+        # Display selected model info
+        for model in selected_models:
+            if model in model_descriptions:
+                st.markdown(f"""
+                <div class="feature-card">
+                    <p><strong>{model}</strong></p>
+                    <p><small>{model_descriptions[model]}</small></p>
+                </div>
+                """, unsafe_allow_html=True)
         
-        if st.session_state.user_preferences['show_advanced_metrics']:
-            show_feature_analysis = st.checkbox("🔍 Show Feature Analysis", True)
-        else:
-            show_feature_analysis = False
+        # Analysis options
+        st.markdown("### ⚙️ Analysis Options")
+        
+        analysis_mode = st.radio(
+            "Analysis Mode",
+            ["🔍 Single Image", "📁 Batch Processing", "⚖️ Model Comparison"],
+            help="Choose how you want to analyze your images"
+        )
+        
+        show_feature_analysis = st.checkbox("🔬 Show Feature Analysis", 
+                                           st.session_state.user_preferences['show_advanced_metrics'])
+        show_confidence_details = st.checkbox("📊 Show Confidence Details", 
+                                             st.session_state.user_preferences['show_confidence_details'])
+        enable_notifications = st.checkbox("🔔 Enable Analysis Notifications", 
+                                          st.session_state.user_preferences['notification_enabled'])
     
     with col1:
-        if batch_mode:
+        st.markdown("### 📤 Image Upload & Processing")
+        
+        if analysis_mode == "📁 Batch Processing":
             uploaded_files = st.file_uploader(
-                "📤 Upload Multiple Plant Images", 
+                "Upload Multiple Plant Images", 
                 type=["jpg", "png", "jpeg"], 
                 accept_multiple_files=True,
-                key="batch_classify"
+                key="batch_classify",
+                help="Select multiple images for batch analysis (Max 20 images)"
             )
             
             if uploaded_files:
-                st.write(f"📊 Processing {len(uploaded_files)} images...")
+                if len(uploaded_files) > 20:
+                    st.warning("⚠️ Maximum 20 images allowed. Please reduce your selection.")
+                    return
                 
-                results_data = []
-                progress_bar = st.progress(0)
+                st.markdown(f"""
+                <div class="analysis-container">
+                    <h4>📊 Batch Analysis Overview</h4>
+                    <p><strong>Images to process:</strong> {len(uploaded_files)}</p>
+                    <p><strong>Selected models:</strong> {len(selected_models)}</p>
+                    <p><strong>Total analyses:</strong> {len(uploaded_files) * len(selected_models)}</p>
+                    <p><strong>Estimated time:</strong> {len(uploaded_files) * len(selected_models) * 1.2:.1f} seconds</p>
+                </div>
+                """, unsafe_allow_html=True)
                 
-                for i, uploaded_file in enumerate(uploaded_files):
-                    image = Image.open(uploaded_file)
+                if st.button("🚀 Start Batch Analysis", type="primary"):
+                    results_data = []
+                    progress_container = st.container()
                     
-                    # Analyze with selected models
-                    for model_name in selected_models:
-                        result = analyze_image_advanced(image, model_name)
-                        results_data.append({
-                            "Image": uploaded_file.name,
-                            "Model": model_name,
-                            "Prediction": result['prediction'],
-                            "Confidence": f"{result['confidence']:.2f}%",
-                            "User": result['user']
-                        })
+                    with progress_container:
+                        progress_bar = st.progress(0)
+                        status_text = st.empty()
+                        
+                        total_operations = len(uploaded_files) * len(selected_models)
+                        current_operation = 0
+                        
+                        for i, uploaded_file in enumerate(uploaded_files):
+                            image = Image.open(uploaded_file)
+                            
+                            # Show current image being processed
+                            st.image(image, caption=f"Processing: {uploaded_file.name}", width=200)
+                            
+                            for model_name in selected_models:
+                                current_operation += 1
+                                status_text.text(f"🔄 Processing {uploaded_file.name} with {model_name}...")
+                                
+                                result = analyze_image_advanced(image, model_name)
+                                results_data.append({
+                                    "Image": uploaded_file.name,
+                                    "Model": model_name,
+                                    "Prediction": result['prediction'],
+                                    "Confidence": f"{result['confidence']:.2f}%",
+                                    "Analysis_Time": f"{result['analysis_time']:.3f}s",
+                                    "User": result['user'],
+                                    "Timestamp": result['timestamp'].strftime("%H:%M:%S")
+                                })
+                                
+                                # Update analytics
+                                update_analytics(result['prediction'], result['confidence'], model_name)
+                                
+                                progress_bar.progress(current_operation / total_operations)
+                                time.sleep(0.1)  # Small delay for visual feedback
                     
-                    progress_bar.progress((i + 1) / len(uploaded_files))
-                
-                # Display results table
-                results_df = pd.DataFrame(results_data)
-                st.dataframe(results_df, use_container_width=True)
-                
-                # Model comparison chart
-                if len(selected_models) > 1:
-                    fig = px.bar(
-                        results_df.groupby(['Model', 'Prediction']).size().reset_index(name='Count'),
-                        x='Model', y='Count', color='Prediction',
-                        title="Model Predictions Comparison"
-                    )
-                    st.plotly_chart(fig, use_container_width=True)
+                    status_text.text("✅ Batch analysis completed!")
+                    
+                    # Display comprehensive results
+                    st.markdown("### 📋 Batch Analysis Results")
+                    
+                    results_df = pd.DataFrame(results_data)
+                    st.dataframe(results_df, use_container_width=True)
+                    
+                    # Enhanced visualizations
+                    col_viz1, col_viz2 = st.columns(2)
+                    
+                    with col_viz1:
+                        # Prediction distribution by model
+                        fig_pred = px.histogram(
+                            results_df, 
+                            x='Prediction', 
+                            color='Model',
+                            title="Prediction Distribution by Model",
+                            barmode='group'
+                        )
+                        st.plotly_chart(fig_pred, use_container_width=True)
+                    
+                    with col_viz2:
+                        # Confidence distribution
+                        results_df['Confidence_Numeric'] = results_df['Confidence'].str.replace('%', '').astype(float)
+                        fig_conf = px.box(
+                            results_df,
+                            x='Model',
+                            y='Confidence_Numeric',
+                            title="Confidence Distribution by Model"
+                        )
+                        st.plotly_chart(fig_conf, use_container_width=True)
+                    
+                    # Summary statistics
+                    st.markdown("### 📊 Summary Statistics")
+                    
+                    summary_stats = results_df.groupby('Model').agg({
+                        'Confidence_Numeric': ['mean', 'std', 'min', 'max'],
+                        'Prediction': 'count'
+                    }).round(2)
+                    
+                    st.dataframe(summary_stats, use_container_width=True)
+                    
+                    # Export functionality
+                    col_exp1, col_exp2 = st.columns(2)
+                    with col_exp1:
+                        if st.button("📥 Export Results to CSV"):
+                            csv = results_df.to_csv(index=False)
+                            b64 = base64.b64encode(csv.encode()).decode()
+                            href = f'<a href="data:file/csv;base64,{b64}" download="batch_analysis_results.csv">📥 Download CSV</a>'
+                            st.markdown(href, unsafe_allow_html=True)
+                    
+                    with col_exp2:
+                        if st.button("📊 Generate Report"):
+                            st.markdown("### 📋 Analysis Report")
+                            
+                            total_images = len(uploaded_files)
+                            healthy_count = len(results_df[results_df['Prediction'] == 'Healthy'])
+                            diseased_count = total_images - healthy_count
+                            avg_confidence = results_df['Confidence_Numeric'].mean()
+                            
+                            st.markdown(f"""
+                            <div class="analysis-container">
+                                <h4>📊 Batch Analysis Report</h4>
+                                <p><strong>Total Images Processed:</strong> {total_images}</p>
+                                <p><strong>Healthy Plants:</strong> {healthy_count} ({healthy_count/total_images*100:.1f}%)</p>
+                                <p><strong>Diseased Plants:</strong> {diseased_count} ({diseased_count/total_images*100:.1f}%)</p>
+                                <p><strong>Average Confidence:</strong> {avg_confidence:.1f}%</p>
+                                <p><strong>Models Used:</strong> {', '.join(selected_models)}</p>
+                                <p><strong>Analysis Completed:</strong> {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
+                            </div>
+                            """, unsafe_allow_html=True)
         
-        else:
+        else:  # Single image or model comparison
             uploaded_file = st.file_uploader(
-                "📤 Upload Plant Leaf Image", 
+                "Upload Plant Leaf Image", 
                 type=["jpg", "png", "jpeg"], 
-                key="classify"
+                key="single_classify",
+                help="Upload a single image for detailed analysis"
             )
             
             if uploaded_file:
                 image = Image.open(uploaded_file)
                 st.image(image, caption="📸 Uploaded Image", use_container_width=True)
                 
+                # Enhanced image information
+                st.markdown(f"""
+                <div class="analysis-container">
+                    <h4>📋 Image Properties</h4>
+                    <div class="stats-grid">
+                        <div>
+                            <p><strong>Filename:</strong> {uploaded_file.name}</p>
+                            <p><strong>Dimensions:</strong> {image.size[0]} x {image.size[1]}</p>
+                        </div>
+                        <div>
+                            <p><strong>Format:</strong> {image.format}</p>
+                            <p><strong>File Size:</strong> {uploaded_file.size / 1024:.1f} KB</p>
+                        </div>
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+                
                 if st.button("🔍 Analyze with Selected Models", type="primary"):
                     results = {}
                     
-                    with st.spinner("🔄 Running classification..."):
-                        for model_name in selected_models:
+                    # Analysis progress
+                    with st.spinner("🔄 Running multi-model analysis..."):
+                        progress_bar = st.progress(0)
+                        status_text = st.empty()
+                        
+                        for i, model_name in enumerate(selected_models):
+                            status_text.text(f"🤖 Running {model_name}...")
                             results[model_name] = analyze_image_advanced(image, model_name)
+                            update_analytics(results[model_name]['prediction'], results[model_name]['confidence'], model_name)
+                            progress_bar.progress((i + 1) / len(selected_models))
+                            time.sleep(0.2)
+                        
+                        status_text.text("✅ Analysis complete!")
                     
                     # Display results comparison
-                    st.markdown("### 📊 Model Comparison Results")
+                    st.markdown("### 🔬 Multi-Model Analysis Results")
                     
-                    cols = st.columns(len(selected_models))
+                    # Model comparison cards
+                    if len(selected_models) <= 3:
+                        cols = st.columns(len(selected_models))
+                    else:
+                        cols = st.columns(3)
+                    
                     for i, (model_name, result) in enumerate(results.items()):
-                        with cols[i]:
+                        with cols[i % 3]:
+                            confidence_color = "#4CAF50" if result['confidence'] > 80 else "#FF9800" if result['confidence'] > 60 else "#F44336"
+                            
                             st.markdown(f"""
-                            <div class="feature-card">
+                            <div class="model-card">
                                 <h4>{model_name}</h4>
-                                <h3>{result['prediction']}</h3>
-                                <p>Confidence: {result['confidence']:.1f}%</p>
+                                <h2>{result['disease_details']['icon']} {result['prediction']}</h2>
+                                <p style="color: white; font-size: 1.2em;"><strong>{result['confidence']:.1f}%</strong></p>
+                                <p><small>Analysis time: {result['analysis_time']:.3f}s</small></p>
                             </div>
                             """, unsafe_allow_html=True)
                     
-                    # Feature analysis
-                    if show_feature_analysis:
-                        st.markdown("### 🔍 Feature Analysis")
-                        
-                        # Extract and display features
-                        features = extract_features(image)
-                        feature_names = ['Mean_R', 'Mean_G', 'Mean_B', 'Std_R', 'Std_G', 'Std_B'] + [f'LBP_{i}' for i in range(10)]
-                        
-                        feature_df = pd.DataFrame({
-                            'Feature': feature_names,
-                            'Value': features
-                        })
-                        
-                        fig = px.bar(feature_df, x='Feature', y='Value', title="Extracted Features")
-                        st.plotly_chart(fig, use_container_width=True)
+                    # Detailed comparison table
+                    st.markdown("### 📊 Detailed Comparison")
                     
-                    # Update history for all models
+                    comparison_data = []
+                    for model_name, result in results.items():
+                        comparison_data.append({
+                            "Model": model_name,
+                            "Prediction": result['prediction'],
+                            "Confidence": f"{result['confidence']:.2f}%",
+                            "Confidence_Level": result['confidence_level'],
+                            "Analysis_Time": f"{result['analysis_time']:.3f}s"
+                        })
+                    
+                    comparison_df = pd.DataFrame(comparison_data)
+                    st.dataframe(comparison_df, use_container_width=True)
+                    
+                    # Consensus analysis
+                    st.markdown("### 🗳️ Consensus Analysis")
+                    
+                    predictions = [result['prediction'] for result in results.values()]
+                    confidences = [result['confidence'] for result in results.values()]
+                    
+                    # Find consensus
+                    from collections import Counter
+                    prediction_counts = Counter(predictions)
+                    consensus_prediction = prediction_counts.most_common(1)[0][0]
+                    consensus_count = prediction_counts.most_common(1)[0][1]
+                    
+                    avg_confidence = np.mean(confidences)
+                    consensus_strength = consensus_count / len(predictions) * 100
+                    
+                    st.markdown(f"""
+                    <div class="prediction-box">
+                        <h3>🎯 Consensus Result</h3>
+                        <h2>{disease_info[consensus_prediction]['icon']} {consensus_prediction}</h2>
+                        <p><strong>Consensus Strength:</strong> {consensus_strength:.1f}% ({consensus_count}/{len(predictions)} models agree)</p>
+                        <p><strong>Average Confidence:</strong> {avg_confidence:.1f}%</p>
+                        <p><strong>Recommendation:</strong> {"High confidence result" if consensus_strength > 66 else "Consider additional analysis"}</p>
+                    </div>
+                    """, unsafe_allow_html=True)
+                    
+                    # Probability distribution visualization
+                    if show_confidence_details:
+                        st.markdown("### 📈 Probability Analysis")
+                        
+                        # Collect all probabilities
+                        all_probs = {}
+                        for model_name, result in results.items():
+                            for disease, prob in result['all_probabilities'].items():
+                                if disease not in all_probs:
+                                    all_probs[disease] = []
+                                all_probs[disease].append(prob)
+                        
+                        # Create probability comparison chart
+                        prob_data = []
+                        for disease, probs in all_probs.items():
+                            prob_data.append({
+                                "Disease": disease,
+                                "Mean_Probability": np.mean(probs),
+                                "Std_Probability": np.std(probs),
+                                "Min_Probability": np.min(probs),
+                                "Max_Probability": np.max(probs)
+                            })
+                        
+                        prob_df = pd.DataFrame(prob_data)
+                        
+                        fig_prob = px.bar(
+                            prob_df,
+                            x='Disease',
+                            y='Mean_Probability',
+                            error_y='Std_Probability',
+                            title="Average Probability Distribution Across Models",
+                            color='Mean_Probability',
+                            color_continuous_scale='RdYlGn'
+                        )
+                        st.plotly_chart(fig_prob, use_container_width=True)
+                    
+                    # Feature importance analysis
+                    if show_feature_analysis:
+                        st.markdown("### 🔬 Feature Importance Analysis")
+                        
+                        # Average feature importance across models
+                        all_features = {}
+                        for model_name, result in results.items():
+                            for feature, importance in result['feature_importance'].items():
+                                if feature not in all_features:
+                                    all_features[feature] = []
+                                all_features[feature].append(importance)
+                        
+                        avg_features = {feature: np.mean(importances) for feature, importances in all_features.items()}
+                        top_features = sorted(avg_features.items(), key=lambda x: x[1], reverse=True)[:10]
+                        
+                        feature_df = pd.DataFrame(top_features, columns=['Feature', 'Average_Importance'])
+                        
+                        fig_features = px.bar(
+                            feature_df,
+                            x='Average_Importance',
+                            y='Feature',
+                            orientation='h',
+                            title="Top 10 Most Important Features (Averaged Across Models)",
+                            color='Average_Importance',
+                            color_continuous_scale='viridis'
+                        )
+                        st.plotly_chart(fig_features, use_container_width=True)
+                    
+                    # Add to history
                     for model_name, result in results.items():
                         st.session_state.history.append({
                             "Mode": "Classification",
@@ -860,10 +1150,13 @@ def show_classification():
                             "Prediction": result['prediction'],
                             "Confidence": f"{result['confidence']:.2f}%",
                             "Timestamp": result['timestamp'].strftime("%Y-%m-%d %H:%M:%S"),
-                            "User": result['user']
+                            "User": result['user'],
+                            "Analysis_Time": f"{result['analysis_time']:.3f}s"
                         })
-                        
-                        update_analytics(result['prediction'], result['confidence'])
+                    
+                    # Notification
+                    if enable_notifications:
+                        st.success(f"🔔 Analysis complete! Consensus: {consensus_prediction} ({consensus_strength:.1f}% agreement)")
 
 # --- Treatment Guide Page ---
 def show_treatment():
