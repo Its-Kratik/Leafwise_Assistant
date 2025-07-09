@@ -969,7 +969,7 @@ def show_classification():
         """)
 # --- Treatment Guide Page ---
 def show_treatment():
-    """Comprehensive treatment and prevention guide with structured viewer"""
+ 
     st.markdown('<h1 class="main-header">💊 Treatment & Prevention Guide</h1>', unsafe_allow_html=True)
     
     # Header statistics
@@ -984,7 +984,9 @@ def show_treatment():
         """.format(len(disease_info)), unsafe_allow_html=True)
     
     with col2:
-        avg_success_rate = np.mean([info['success_rate'] for info in disease_info.values()])
+        rates = [info.get('success_rate') for info in disease_info if info.get('success_rate') is not None]
+        avg_success_rate = np.mean(rates) if rates else 0
+
         st.markdown(f"""
         <div class="metric-card">
             <h4>📈 Avg Success Rate</h4>
@@ -1573,7 +1575,7 @@ def show_settings():
         st.markdown("#### 🎨 Display Settings")
         
         # Theme selection
-        theme_options = ["🌞 Light", "🌙 Dark", "🌈 Colorful", "🌸 Pastel"]
+        theme_options = ["🌞 Light", "🌙 Dark", "🌈 Colorful"]
         selected_theme = st.selectbox(
             "Theme", 
             theme_options,
