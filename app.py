@@ -345,7 +345,6 @@ disease_info = {
 }
 
 # --- Enhanced Feature Extraction ---
-@st.cache_data
 def extract_features(pil_img):
     """Extract features from plant image"""
     img = np.array(pil_img.resize((128, 128)))
