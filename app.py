@@ -2259,37 +2259,75 @@ def main():
         show_login_page()
         return
     
-    # Load models
+    # Load models with error handling
     global models
-    models = load_models()
-    
-    # Setup sidebar and navigation
-    activity, task = setup_sidebar()
-    
-    # Check if models are loaded
-    if models is None:
-        st.error("❌ Cannot load ML models. Please check your model files.")
+    try:
+        models = load_models()
+        if models is None:
+            st.error("❌ Cannot load ML models. Please check your model files.")
+            return
+    except Exception as e:
+        st.error(f"❌ Error loading models: {str(e)}")
         return
     
-    # Enhanced routing with all features
-    if activity == "About Project":
-        show_about()
-    elif activity == "User Management":
-        show_user_management()
-    elif activity == "System Status":
-        show_system_status()
-    elif activity == "Analytics":
-        show_analytics()
-    elif activity == "Settings":
-        show_settings()
-    elif task == "Detection":
-        show_detection()
-    elif task == "Classification":
-        show_classification()
-    elif task == "Treatment":
-        show_treatment()
-    elif task == "Batch Analysis":
-        show_batch_analysis()
+    # Setup sidebar and navigation
+    try:
+        activity, task = setup_sidebar()
+    except Exception as e:
+        st.error(f"❌ Navigation error: {str(e)}")
+        return
+    
+    # Enhanced routing with proper error handling
+    try:
+        if activity == "About Project":
+            show_about()
+        elif activity == "User Management":
+            show_user_management()
+        elif activity == "System Status":
+            show_system_status()
+        elif activity == "Analytics":
+            show_analytics()
+        elif activity == "Settings":
+            show_settings()
+        elif activity == "Plant Disease":  # This is the key fix
+            if task == "Detection":
+                show_detection()
+            elif task == "Classification":
+                show_classification()
+            elif task == "Treatment":
+                show_treatment()
+            elif task == "Batch Analysis":
+                show_batch_analysis()
+            else:
+                # Default to detection if no task specified
+                show_detection()
+        else:
+            # Fallback to about page
+            show_about()
+            
+    except Exception as e:
+        st.error(f"❌ Page loading error: {str(e)}")
+        st.write("Please try refreshing the page or contact support.")
+
+# Enhanced footer
+    st.markdown("---")
+    st.markdown("""
+    <div style='text-align: center; padding: 2rem; 
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                color: white; border-radius: 15px; margin-top: 2rem;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.1);'>
+        <h3>🌿 Plant Disease AI Assistant </h3>
+        <p>🚀 Made with ❤️ by Kratik Jain</p>
+        <p>⚡ Powered by Streamlit • OpenCV • Scikit-learn • Plotly </p>
+        <div style='margin-top: 1rem; font-size: 0.9rem; opacity: 0.8;'>
+            📊 Total Predictions: {total} | 🌱 Healthy: {healthy} | 🦠 Diseased: {diseased}
+        </div>
+    </div>
+    """.format(
+        total=st.session_state.analytics['total_predictions'],
+        healthy=st.session_state.analytics['healthy_count'],
+        diseased=st.session_state.analytics['disease_count']
+    ), unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()
