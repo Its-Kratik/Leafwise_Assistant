@@ -8,3 +8,4 @@ joblib
 scikit-image
 matplotlib
 seaborn
+plotly
