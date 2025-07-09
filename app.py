@@ -15,8 +15,6 @@ import base64
 import io
 import hashlib
 import json
-import warnings
-warnings.filterwarnings('ignore')
 
 # Page config with modern styling
 st.set_page_config(
@@ -42,16 +40,12 @@ def init_users():
             'admin': {
                 'password': hash_password('admin123'),
                 'role': 'admin',
-                'created_at': datetime.now().isoformat(),
-                'last_login': datetime.now().isoformat(),
-                'total_predictions': 0
+                'created_at': datetime.now().isoformat()
             },
             'user': {
                 'password': hash_password('user123'),
                 'role': 'user',
-                'created_at': datetime.now().isoformat(),
-                'last_login': datetime.now().isoformat(),
-                'total_predictions': 0
+                'created_at': datetime.now().isoformat()
             }
         }
 
@@ -60,7 +54,6 @@ def authenticate_user(username, password):
     if username in st.session_state.users:
         stored_hash = st.session_state.users[username]['password']
         if stored_hash == hash_password(password):
-            st.session_state.users[username]['last_login'] = datetime.now().isoformat()
             return True
     return False
 
@@ -75,32 +68,16 @@ def register_user(username, password, role='user'):
     st.session_state.users[username] = {
         'password': hash_password(password),
         'role': role,
-        'created_at': datetime.now().isoformat(),
-        'last_login': datetime.now().isoformat(),
-        'total_predictions': 0
+        'created_at': datetime.now().isoformat()
     }
     return True, "User registered successfully"
 
 def show_login_page():
-    """Display enhanced login/registration page"""
+    """Display login/registration page"""
     st.markdown("""
-    <div style='text-align: center; padding: 3rem 0; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 20px; margin-bottom: 2rem;'>
-        <h1 style='color: white; font-size: 3.5rem; margin-bottom: 1rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);'>🌿 Plant Disease AI</h1>
-        <p style='font-size: 1.4rem; color: #f0f0f0; margin-bottom: 2rem; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);'>Advanced ML-powered plant health diagnosis system</p>
-        <div style='display: flex; justify-content: center; gap: 2rem; margin-top: 2rem;'>
-            <div style='background: rgba(255,255,255,0.2); padding: 1rem; border-radius: 10px; color: white;'>
-                <h3>🎯 95%+ Accuracy</h3>
-                <p>State-of-the-art ML models</p>
-            </div>
-            <div style='background: rgba(255,255,255,0.2); padding: 1rem; border-radius: 10px; color: white;'>
-                <h3>⚡ Real-time</h3>
-                <p>Instant analysis results</p>
-            </div>
-            <div style='background: rgba(255,255,255,0.2); padding: 1rem; border-radius: 10px; color: white;'>
-                <h3>🔒 Secure</h3>
-                <p>Enterprise-grade security</p>
-            </div>
-        </div>
+    <div style='text-align: center; padding: 3rem 0;'>
+        <h1 style='color: #4CAF50; font-size: 3rem; margin-bottom: 1rem;'>🌿 Plant Disease AI</h1>
+        <p style='font-size: 1.2rem; color: #666; margin-bottom: 2rem;'>Advanced ML-powered plant health diagnosis</p>
     </div>
     """, unsafe_allow_html=True)
     
@@ -130,8 +107,8 @@ def show_login_page():
             
             with col_b:
                 st.markdown("**Demo Accounts:**")
-                st.code("👨‍💼 Admin: admin/admin123")
-                st.code("👤 User: user/user123")
+                st.write("👨‍💼 Admin: admin/admin123")
+                st.write("👤 User: user/user123")
         
         with tab2:
             st.markdown("### 📝 Create New Account")
@@ -150,40 +127,42 @@ def show_login_page():
                     else:
                         st.error(f"❌ {message}")
 
-# --- Enhanced Theme System (Removed Pastel) ---
+# --- Theme System ---
 def get_theme_css(theme_name):
-    """Generate CSS for different themes (removed pastel)"""
+    """Generate CSS for different themes"""
     
     themes = {
         "🌞 Light": {
             "primary_color": "#4CAF50",
             "secondary_color": "#2196F3",
-            "accent_color": "#FF9800",
             "background_gradient": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-            "card_background": "rgba(255,255,255,0.95)",
+            "card_background": "rgba(255,255,255,0.9)",
             "text_color": "#333333",
-            "border_color": "rgba(0,0,0,0.1)",
-            "sidebar_bg": "rgba(248,249,250,0.95)"
+            "border_color": "rgba(0,0,0,0.1)"
         },
         "🌙 Dark": {
             "primary_color": "#66BB6A",
             "secondary_color": "#42A5F5",
-            "accent_color": "#FFA726",
             "background_gradient": "linear-gradient(135deg, #2C3E50 0%, #34495E 100%)",
-            "card_background": "rgba(45,45,45,0.95)",
+            "card_background": "rgba(45,45,45,0.9)",
             "text_color": "#FFFFFF",
-            "border_color": "rgba(255,255,255,0.1)",
-            "sidebar_bg": "rgba(33,37,41,0.95)"
+            "border_color": "rgba(255,255,255,0.1)"
         },
         "🌈 Colorful": {
             "primary_color": "#FF6B6B",
             "secondary_color": "#4ECDC4",
-            "accent_color": "#FFE66D",
             "background_gradient": "linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 50%, #45B7D1 100%)",
             "card_background": "rgba(255,255,255,0.95)",
             "text_color": "#2C3E50",
-            "border_color": "rgba(0,0,0,0.1)",
-            "sidebar_bg": "rgba(255,255,255,0.9)"
+            "border_color": "rgba(0,0,0,0.1)"
+        },
+        "🌸 Pastel": {
+            "primary_color": "#F8BBD9",
+            "secondary_color": "#B8E6B8",
+            "background_gradient": "linear-gradient(135deg, #FFE5E5 0%, #E5F3E5 100%)",
+            "card_background": "rgba(255,255,255,0.8)",
+            "text_color": "#5D4E75",
+            "border_color": "rgba(93,78,117,0.2)"
         }
     }
     
@@ -191,258 +170,73 @@ def get_theme_css(theme_name):
     
     return f"""
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
-        
         .main-header {{
-            font-family: 'Poppins', sans-serif;
-            font-size: 3rem;
+            font-size: 2.5rem;
             background: linear-gradient(90deg, {theme['primary_color']}, {theme['secondary_color']});
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             text-align: center;
             margin-bottom: 2rem;
-            font-weight: 700;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
         }}
         
         .metric-card {{
             background: {theme['background_gradient']};
-            padding: 1.5rem;
-            border-radius: 15px;
+            padding: 1rem;
+            border-radius: 10px;
             color: white;
             margin: 0.5rem 0;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.1);
-            transition: transform 0.3s ease;
-        }}
-        
-        .metric-card:hover {{
-            transform: translateY(-5px);
-            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
         }}
         
         .prediction-box {{
             background: linear-gradient(135deg, {theme['primary_color']} 0%, {theme['secondary_color']} 100%);
-            padding: 2rem;
-            border-radius: 20px;
+            padding: 1.5rem;
+            border-radius: 15px;
             color: white;
             text-align: center;
             margin: 1rem 0;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }}
         
         .feature-card {{
             background: {theme['card_background']};
-            padding: 1.5rem;
-            border-radius: 15px;
+            padding: 1rem;
+            border-radius: 10px;
             border: 1px solid {theme['border_color']};
-            margin: 1rem 0;
+            margin: 0.5rem 0;
             color: {theme['text_color']};
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            backdrop-filter: blur(10px);
-            transition: transform 0.3s ease;
         }}
         
-        .feature-card:hover {{
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-        }}
-        
-        .confidence-high {{ 
-            color: {theme['primary_color']}; 
-            font-weight: bold; 
-            font-size: 1.2em;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-        }}
-        .confidence-medium {{ 
-            color: {theme['accent_color']}; 
-            font-weight: bold; 
-            font-size: 1.2em;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-        }}
-        .confidence-low {{ 
-            color: #F44336; 
-            font-weight: bold; 
-            font-size: 1.2em;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-        }}
+        .confidence-high {{ color: {theme['primary_color']}; font-weight: bold; }}
+        .confidence-medium {{ color: #FF9800; font-weight: bold; }}
+        .confidence-low {{ color: #F44336; font-weight: bold; }}
         
         .stProgress > div > div > div > div {{
             background: linear-gradient(90deg, {theme['primary_color']}, {theme['secondary_color']});
-            border-radius: 10px;
         }}
         
         .user-info {{
             background: {theme['card_background']};
-            padding: 1rem 1.5rem;
-            border-radius: 12px;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
             border: 1px solid {theme['border_color']};
             margin-bottom: 1rem;
             color: {theme['text_color']};
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }}
-        
-        .nav-section {{
-            background: {theme['sidebar_bg']};
-            padding: 1rem;
-            border-radius: 10px;
-            margin-bottom: 1.5rem;
-            border: 1px solid {theme['border_color']};
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }}
-        
-        .stats-grid {{
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin: 1rem 0;
-        }}
-        
-        .analysis-container {{
-            background: {theme['card_background']};
-            padding: 2rem;
-            border-radius: 15px;
-            margin: 1rem 0;
-            border: 1px solid {theme['border_color']};
-            box-shadow: 0 6px 25px rgba(0,0,0,0.1);
-        }}
-        
-        .model-comparison {{
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1rem;
-            margin: 1rem 0;
-        }}
-        
-        .model-card {{
-            background: linear-gradient(135deg, {theme['primary_color']} 0%, {theme['secondary_color']} 100%);
-            color: white;
-            padding: 1.5rem;
-            border-radius: 12px;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }}
-        
-        .treatment-timeline {{
-            background: {theme['card_background']};
-            padding: 1.5rem;
-            border-radius: 12px;
-            border-left: 4px solid {theme['primary_color']};
-            margin: 1rem 0;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }}
-        
-        .system-info {{
-            background: {theme['background_gradient']};
-            color: white;
-            padding: 1.5rem;
-            border-radius: 12px;
-            margin: 1rem 0;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }}
         
         .logout-btn {{
             background: linear-gradient(135deg, #FF6B6B 0%, #FF8E8E 100%);
             color: white;
-            padding: 0.75rem 1.5rem;
+            padding: 0.5rem 1rem;
             border: none;
-            border-radius: 10px;
+            border-radius: 8px;
             cursor: pointer;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }}
-        
-        .logout-btn:hover {{
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(255,107,107,0.3);
-        }}
-        
-        /* Enhanced sidebar styling */
-        .css-1d391kg {{
-            background: {theme['sidebar_bg']};
-            border-right: 2px solid {theme['border_color']};
-        }}
-        
-        /* Enhanced main content area */
-        .css-18e3th9 {{
-            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
-        }}
-        
-        /* Chart container enhancements */
-        .plotly-graph-div {{
-            background: {theme['card_background']};
-            border-radius: 12px;
-            padding: 1rem;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }}
-        
-        /* Table enhancements */
-        .dataframe {{
-            background: {theme['card_background']};
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }}
-        
-        /* Button enhancements */
-        .stButton > button {{
-            border-radius: 8px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }}
-        
-        .stButton > button:hover {{
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }}
-        
-        /* File uploader enhancements */
-        .stFileUploader {{
-            background: {theme['card_background']};
-            border-radius: 12px;
-            padding: 1rem;
-            border: 2px dashed {theme['border_color']};
-        }}
-        
-        /* Notification styles */
-        .notification {{
-            background: {theme['card_background']};
-            border-left: 4px solid {theme['primary_color']};
-            padding: 1rem;
-            border-radius: 8px;
-            margin: 1rem 0;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }}
-        
-        /* Loading animation */
-        .loading-container {{
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 2rem;
-        }}
-        
-        .spinner {{
-            border: 4px solid {theme['border_color']};
-            border-top: 4px solid {theme['primary_color']};
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-        }}
-        
-        @keyframes spin {{
-            0% {{ transform: rotate(0deg); }}
-            100% {{ transform: rotate(360deg); }}
         }}
     </style>
     """
 
-# --- Session State Setup with Enhanced Features ---
+# --- Session State Setup with Authentication ---
 def init_session_state():
-    """Initialize session state variables with enhanced features"""
+    """Initialize session state variables"""
     if 'logged_in' not in st.session_state:
         st.session_state.logged_in = False
     if 'username' not in st.session_state:
@@ -456,40 +250,20 @@ def init_session_state():
             'theme': '🌞 Light',
             'auto_analyze': False,
             'show_advanced_metrics': True,
-            'notification_enabled': True,
-            'show_confidence_details': True,
-            'batch_size': 10,
-            'default_model': 'Voting Ensemble'
+            'notification_enabled': True
         }
     if 'analytics' not in st.session_state:
         st.session_state.analytics = {
             'total_predictions': 0,
             'healthy_count': 0,
             'disease_count': 0,
-            'accuracy_scores': [],
-            'model_usage': {},
-            'daily_predictions': {},
-            'user_activity': {}
-        }
-    if 'session_info' not in st.session_state:
-        st.session_state.session_info = {
-            'start_time': datetime.now(),
-            'predictions_this_session': 0,
-            'models_used': set(),
-            'images_analyzed': 0
-        }
-    if 'system_status' not in st.session_state:
-        st.session_state.system_status = {
-            'models_loaded': False,
-            'last_model_check': None,
-            'memory_usage': 0,
-            'performance_metrics': []
+            'accuracy_scores': []
         }
 
-# --- Enhanced Model Loading with Status Tracking ---
+# --- Load Models ---
 @st.cache_resource
 def load_models():
-    """Load ML models with enhanced error handling and status tracking"""
+    """Load ML models with error handling"""
     try:
         models = {
             "Random Forest": joblib.load("models/plant_disease_rf_model.joblib"),
@@ -499,223 +273,108 @@ def load_models():
             "KNN": joblib.load("models/plant_disease_knn_model.joblib"),
             "Logistic Regression": joblib.load("models/plant_disease_logreg_model.joblib")
         }
-        
-        # Update system status
-        st.session_state.system_status['models_loaded'] = True
-        st.session_state.system_status['last_model_check'] = datetime.now()
-        
         return models
     except FileNotFoundError:
-        # Create enhanced dummy models for demonstration
-        from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, VotingClassifier
+        # Create dummy models for demonstration
+        from sklearn.ensemble import RandomForestClassifier
         from sklearn.svm import SVC
+        from sklearn.ensemble import GradientBoostingClassifier
+        from sklearn.ensemble import VotingClassifier
         from sklearn.neighbors import KNeighborsClassifier
         from sklearn.linear_model import LogisticRegression
-        from sklearn.model_selection import cross_val_score
         
-        # Create dummy trained models with better parameters
+        # Create dummy trained models (in production, load real models)
         dummy_models = {
-            "Random Forest": RandomForestClassifier(
-                n_estimators=200, 
-                max_depth=10, 
-                random_state=42,
-                n_jobs=-1
-            ),
-            "SVM (RBF Kernel)": SVC(
-                kernel='rbf', 
-                probability=True, 
-                random_state=42,
-                C=1.0,
-                gamma='scale'
-            ),
-            "Gradient Boosting": GradientBoostingClassifier(
-                n_estimators=150, 
-                learning_rate=0.1,
-                max_depth=8,
-                random_state=42
-            ),
-            "KNN": KNeighborsClassifier(
-                n_neighbors=7,
-                weights='distance',
-                algorithm='auto'
-            ),
-            "Logistic Regression": LogisticRegression(
-                random_state=42,
-                max_iter=1000,
-                solver='liblinear'
-            )
+            "Random Forest": RandomForestClassifier(n_estimators=100, random_state=42),
+            "SVM (RBF Kernel)": SVC(kernel='rbf', probability=True, random_state=42),
+            "Gradient Boosting": GradientBoostingClassifier(n_estimators=100, random_state=42),
+            "KNN": KNeighborsClassifier(n_neighbors=5),
+            "Logistic Regression": LogisticRegression(random_state=42)
         }
         
-        # Fit dummy models with enhanced sample data
-        np.random.seed(42)
-        X_dummy = np.random.rand(1000, 16)
-        y_dummy = np.random.randint(0, 4, 1000)
+        # Fit dummy models with sample data
+        X_dummy = np.random.rand(100, 16)
+        y_dummy = np.random.randint(0, 4, 100)
         
         for name, model in dummy_models.items():
             model.fit(X_dummy, y_dummy)
-            # Initialize model usage tracking
-            st.session_state.analytics['model_usage'][name] = 0
         
-        # Create enhanced voting ensemble
+        # Create voting ensemble
         voting_model = VotingClassifier(
             estimators=[
                 ('rf', dummy_models["Random Forest"]),
                 ('svm', dummy_models["SVM (RBF Kernel)"]),
-                ('gb', dummy_models["Gradient Boosting"]),
-                ('knn', dummy_models["KNN"])
+                ('gb', dummy_models["Gradient Boosting"])
             ],
             voting='soft'
         )
         voting_model.fit(X_dummy, y_dummy)
         dummy_models["Voting Ensemble"] = voting_model
-        st.session_state.analytics['model_usage']["Voting Ensemble"] = 0
         
-        # Update system status
-        st.session_state.system_status['models_loaded'] = True
-        st.session_state.system_status['last_model_check'] = datetime.now()
-        
-        st.warning("⚠️ Using demo models for demonstration. Please add your trained models for production use.")
+        st.warning("⚠️ Using dummy models for demonstration. Please add your trained models.")
         return dummy_models
 
-# Enhanced disease information database
+# Disease information database
 label_map = {0: 'Healthy', 1: 'Multiple Diseases', 2: 'Rust', 3: 'Scab'}
 
 disease_info = {
     'Healthy': {
         'severity': 'None',
-        'severity_level': 0,
-        'treatment': 'Continue regular care and monitoring',
-        'prevention': 'Maintain good watering, light conditions, and regular inspection',
-        'color': '#4CAF50',
-        'icon': '🌱',
-        'duration': 'Ongoing',
-        'cost': 'Low',
-        'success_rate': 100,
-        'symptoms': ['Normal leaf color', 'No spots or discoloration', 'Good leaf structure'],
-        'causes': ['Proper care', 'Good environmental conditions']
+        'treatment': 'Continue regular care',
+        'prevention': 'Maintain good watering and light conditions',
+        'color': '#4CAF50'
     },
     'Multiple Diseases': {
-        'severity': 'Critical',
-        'severity_level': 4,
-        'treatment': 'Immediate attention required - isolate plant and consult specialist',
-        'prevention': 'Improve drainage, reduce humidity, ensure proper spacing',
-        'color': '#F44336',
-        'icon': '🚨',
-        'duration': '4-6 weeks',
-        'cost': 'High',
-        'success_rate': 60,
-        'symptoms': ['Multiple leaf spots', 'Yellowing', 'Wilting', 'Stunted growth'],
-        'causes': ['Poor drainage', 'High humidity', 'Overcrowding', 'Stress conditions']
+        'severity': 'High',
+        'treatment': 'Immediate attention required - consult plant specialist',
+        'prevention': 'Improve drainage, reduce humidity',
+        'color': '#F44336'
     },
     'Rust': {
-        'severity': 'Moderate',
-        'severity_level': 2,
-        'treatment': 'Apply copper-based fungicide, improve air circulation',
-        'prevention': 'Ensure good air circulation, avoid overhead watering',
-        'color': '#FF9800',
-        'icon': '🦠',
-        'duration': '2-3 weeks',
-        'cost': 'Medium',
-        'success_rate': 85,
-        'symptoms': ['Orange/brown spots', 'Pustules on leaves', 'Yellowing around spots'],
-        'causes': ['High humidity', 'Poor air circulation', 'Wet conditions']
+        'severity': 'Medium',
+        'treatment': 'Apply copper-based fungicide',
+        'prevention': 'Ensure good air circulation',
+        'color': '#FF9800'
     },
     'Scab': {
-        'severity': 'Moderate',
-        'severity_level': 2,
-        'treatment': 'Use sulfur-based fungicide, remove affected leaves',
-        'prevention': 'Avoid overhead watering, ensure good drainage',
-        'color': '#FF5722',
-        'icon': '🍂',
-        'duration': '2-4 weeks',
-        'cost': 'Medium',
-        'success_rate': 80,
-        'symptoms': ['Dark scab-like spots', 'Leaf distortion', 'Premature leaf drop'],
-        'causes': ['Wet conditions', 'Poor drainage', 'Overhead watering']
+        'severity': 'Medium',
+        'treatment': 'Use sulfur-based fungicide',
+        'prevention': 'Avoid overhead watering',
+        'color': '#FF5722'
     }
 }
 
-# --- Enhanced Feature Extraction with Detailed Analysis ---
+# --- Enhanced Feature Extraction ---
+@st.cache_data
 def extract_features(pil_img):
-    """Extract comprehensive features from plant image"""
+    """Extract features from plant image"""
     img = np.array(pil_img.resize((128, 128)))
     img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
     
-    # Color features (enhanced)
+    # Color features
     mean_rgb = img.mean(axis=(0, 1))
     std_rgb = img.std(axis=(0, 1))
     
-    # Convert to different color spaces for better analysis
-    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-    lab = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
-    
-    # Texture features (enhanced)
+    # Texture features
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     lbp = local_binary_pattern(gray, P=8, R=1, method='uniform')
     lbp_hist, _ = np.histogram(lbp.ravel(), bins=np.arange(0, 11), range=(0, 10))
     lbp_hist = lbp_hist.astype("float") / (lbp_hist.sum() + 1e-6)
     
-    # Additional texture features
-    contrast = gray.std()
-    homogeneity = np.mean(gray)
-    
-    # Edge features
-    edges = cv2.Canny(gray, 50, 150)
-    edge_density = np.sum(edges > 0) / (edges.shape[0] * edges.shape[1])
-    
-    # Combine all features
-    features = np.hstack([
-        mean_rgb, std_rgb, 
-        hsv.mean(axis=(0, 1)), 
-        lab.mean(axis=(0, 1)),
-        lbp_hist,
-        [contrast, homogeneity, edge_density]
-    ])
-    
-    return features
+    return np.hstack([mean_rgb, std_rgb, lbp_hist])
 
-# --- Enhanced Analytics Functions ---
-def update_analytics(prediction, confidence, model_name):
-    """Update comprehensive analytics with new prediction"""
+# --- Analytics Functions ---
+def update_analytics(prediction, confidence):
+    """Update analytics with new prediction"""
     st.session_state.analytics['total_predictions'] += 1
-    
     if prediction == 'Healthy':
         st.session_state.analytics['healthy_count'] += 1
     else:
         st.session_state.analytics['disease_count'] += 1
-    
     st.session_state.analytics['accuracy_scores'].append(confidence)
-    
-    # Update model usage
-    if model_name in st.session_state.analytics['model_usage']:
-        st.session_state.analytics['model_usage'][model_name] += 1
-    else:
-        st.session_state.analytics['model_usage'][model_name] = 1
-    
-    # Update daily predictions
-    today = datetime.now().strftime('%Y-%m-%d')
-    if today in st.session_state.analytics['daily_predictions']:
-        st.session_state.analytics['daily_predictions'][today] += 1
-    else:
-        st.session_state.analytics['daily_predictions'][today] = 1
-    
-    # Update user activity
-    if st.session_state.username in st.session_state.analytics['user_activity']:
-        st.session_state.analytics['user_activity'][st.session_state.username] += 1
-    else:
-        st.session_state.analytics['user_activity'][st.session_state.username] = 1
-    
-    # Update session info
-    st.session_state.session_info['predictions_this_session'] += 1
-    st.session_state.session_info['models_used'].add(model_name)
-    
-    # Update user's total predictions
-    st.session_state.users[st.session_state.username]['total_predictions'] += 1
 
 def analyze_image_advanced(image, model_name):
-    """Advanced image analysis with comprehensive metrics"""
-    start_time = time.time()
-    
+    """Advanced image analysis with multiple metrics"""
     features = extract_features(image).reshape(1, -1)
     model = models[model_name]
     
@@ -723,9 +382,6 @@ def analyze_image_advanced(image, model_name):
     prediction = model.predict(features)[0]
     probs = model.predict_proba(features)[0]
     confidence = probs[prediction] * 100
-    
-    # Calculate analysis time
-    analysis_time = time.time() - start_time
     
     # Create comprehensive results
     results = {
@@ -735,1694 +391,20 @@ def analyze_image_advanced(image, model_name):
         'features': features[0],
         'timestamp': datetime.now(),
         'model_used': model_name,
-        'user': st.session_state.username,
-        'analysis_time': analysis_time,
-        'feature_importance': get_feature_importance(features[0], model_name),
-        'disease_details': disease_info[label_map[prediction]],
-        'confidence_level': get_confidence_level(confidence),
-        'recommendations': get_recommendations(label_map[prediction], confidence)
+        'user': st.session_state.username
     }
     
     return results
 
-def get_feature_importance(features, model_name):
-    """Calculate feature importance for interpretability"""
-    feature_names = [
-        'Mean_R', 'Mean_G', 'Mean_B', 'Std_R', 'Std_G', 'Std_B',
-        'HSV_H', 'HSV_S', 'HSV_V', 'LAB_L', 'LAB_A', 'LAB_B'
-    ] + [f'LBP_{i}' for i in range(10)] + ['Contrast', 'Homogeneity', 'Edge_Density']
-    
-    # Simple feature importance based on values (for demo)
-    importance = np.abs(features) / (np.sum(np.abs(features)) + 1e-6)
-    
-    return {name: imp for name, imp in zip(feature_names, importance)}
-
-def get_confidence_level(confidence):
-    """Determine confidence level category"""
-    if confidence >= 85:
-        return "High"
-    elif confidence >= 70:
-        return "Medium"
-    elif confidence >= 50:
-        return "Low"
-    else:
-        return "Very Low"
-
-def get_recommendations(prediction, confidence):
-    """Generate personalized recommendations"""
-    recommendations = []
-    
-    if prediction == 'Healthy':
-        recommendations.extend([
-            "Continue current care routine",
-            "Monitor regularly for early detection",
-            "Maintain optimal growing conditions"
-        ])
-    else:
-        recommendations.extend([
-            "Isolate plant if possible",
-            "Follow treatment protocol immediately",
-            "Monitor progress closely"
-        ])
-    
-    if confidence < 70:
-        recommendations.extend([
-            "Consider getting a second opinion",
-            "Take additional photos for analysis",
-            "Consult with plant specialist"
-        ])
-    
-    return recommendations
-
-def show_classification():
-    """Advanced classification with multiple models comparison and detailed analysis"""
-    st.markdown('<h1 class="main-header">🧠 Advanced Classification</h1>', unsafe_allow_html=True)
-    
-    # Enhanced header with real-time info
-    col1, col2, col3, col4 = st.columns(4)
-    with col1:
-        st.markdown("""
-        <div class="metric-card">
-            <h4>🤖 Available Models</h4>
-            <h2>{}</h2>
-            <p>ML algorithms ready</p>
-        </div>
-        """.format(len(models)), unsafe_allow_html=True)
-    
-    with col2:
-        st.markdown("""
-        <div class="metric-card">
-            <h4>🔬 Analysis Modes</h4>
-            <h2>3</h2>
-            <p>Single, Batch, Compare</p>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col3:
-        ensemble_accuracy = 95.2  # Demo value
-        st.markdown(f"""
-        <div class="metric-card">
-            <h4>🎯 Ensemble Accuracy</h4>
-            <h2>{ensemble_accuracy}%</h2>
-            <p>Voting classifier</p>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col4:
-        st.markdown("""
-        <div class="metric-card">
-            <h4>⚡ Processing Speed</h4>
-            <h2>1.2s</h2>
-            <p>Average per image</p>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    # Main classification interface
-    col1, col2 = st.columns([3, 1])
-    
-    with col2:
-        st.markdown("### 🎛️ Analysis Configuration")
-        
-        # Model selection with descriptions
-        model_descriptions = {
-            "Random Forest": "🌳 Ensemble of decision trees - Good for complex patterns",
-            "SVM (RBF Kernel)": "🔮 Support Vector Machine - Excellent for non-linear data",
-            "Gradient Boosting": "🚀 Sequential weak learners - High accuracy",
-            "Voting Ensemble": "🗳️ Combines multiple models - Best overall performance",
-            "KNN": "👥 K-Nearest Neighbors - Simple but effective",
-            "Logistic Regression": "📈 Linear classifier - Fast and interpretable"
-        }
-        
-        selected_models = st.multiselect(
-            "🤖 Select Models for Analysis",
-            list(models.keys()),
-            default=["Random Forest", "SVM (RBF Kernel)", "Voting Ensemble"],
-            help="Choose multiple models to compare results"
-        )
-        
-        # Display selected model info
-        for model in selected_models:
-            if model in model_descriptions:
-                st.markdown(f"""
-                <div class="feature-card">
-                    <p><strong>{model}</strong></p>
-                    <p><small>{model_descriptions[model]}</small></p>
-                </div>
-                """, unsafe_allow_html=True)
-        
-        # Analysis options
-        st.markdown("### ⚙️ Analysis Options")
-        
-        analysis_mode = st.radio(
-            "Analysis Mode",
-            ["🔍 Single Image", "📁 Batch Processing", "⚖️ Model Comparison"],
-            help="Choose how you want to analyze your images"
-        )
-        
-        show_feature_analysis = st.checkbox("🔬 Show Feature Analysis", 
-                                           st.session_state.user_preferences['show_advanced_metrics'])
-        show_confidence_details = st.checkbox("📊 Show Confidence Details", 
-                                             st.session_state.user_preferences['show_confidence_details'])
-        enable_notifications = st.checkbox("🔔 Enable Analysis Notifications", 
-                                          st.session_state.user_preferences['notification_enabled'])
-    
-    with col1:
-        st.markdown("### 📤 Image Upload & Processing")
-        
-        if analysis_mode == "📁 Batch Processing":
-            uploaded_files = st.file_uploader(
-                "Upload Multiple Plant Images", 
-                type=["jpg", "png", "jpeg"], 
-                accept_multiple_files=True,
-                key="batch_classify",
-                help="Select multiple images for batch analysis (Max 20 images)"
-            )
-            
-            if uploaded_files:
-                if len(uploaded_files) > 20:
-                    st.warning("⚠️ Maximum 20 images allowed. Please reduce your selection.")
-                    return
-                
-                st.markdown(f"""
-                <div class="analysis-container">
-                    <h4>📊 Batch Analysis Overview</h4>
-                    <p><strong>Images to process:</strong> {len(uploaded_files)}</p>
-                    <p><strong>Selected models:</strong> {len(selected_models)}</p>
-                    <p><strong>Total analyses:</strong> {len(uploaded_files) * len(selected_models)}</p>
-                    <p><strong>Estimated time:</strong> {len(uploaded_files) * len(selected_models) * 1.2:.1f} seconds</p>
-                </div>
-                """, unsafe_allow_html=True)
-                
-                if st.button("🚀 Start Batch Analysis", type="primary"):
-                    results_data = []
-                    progress_container = st.container()
-                    
-                    with progress_container:
-                        progress_bar = st.progress(0)
-                        status_text = st.empty()
-                        
-                        total_operations = len(uploaded_files) * len(selected_models)
-                        current_operation = 0
-                        
-                        for i, uploaded_file in enumerate(uploaded_files):
-                            image = Image.open(uploaded_file)
-                            
-                            # Show current image being processed
-                            st.image(image, caption=f"Processing: {uploaded_file.name}", width=200)
-                            
-                            for model_name in selected_models:
-                                current_operation += 1
-                                status_text.text(f"🔄 Processing {uploaded_file.name} with {model_name}...")
-                                
-                                result = analyze_image_advanced(image, model_name)
-                                results_data.append({
-                                    "Image": uploaded_file.name,
-                                    "Model": model_name,
-                                    "Prediction": result['prediction'],
-                                    "Confidence": f"{result['confidence']:.2f}%",
-                                    "Analysis_Time": f"{result['analysis_time']:.3f}s",
-                                    "User": result['user'],
-                                    "Timestamp": result['timestamp'].strftime("%H:%M:%S")
-                                })
-                                
-                                # Update analytics
-                                update_analytics(result['prediction'], result['confidence'], model_name)
-                                
-                                progress_bar.progress(current_operation / total_operations)
-                                time.sleep(0.1)  # Small delay for visual feedback
-                    
-                    status_text.text("✅ Batch analysis completed!")
-                    
-                    # Display comprehensive results
-                    st.markdown("### 📋 Batch Analysis Results")
-                    
-                    results_df = pd.DataFrame(results_data)
-                    st.dataframe(results_df, use_container_width=True)
-                    
-                    # Enhanced visualizations
-                    col_viz1, col_viz2 = st.columns(2)
-                    
-                    with col_viz1:
-                        # Prediction distribution by model
-                        fig_pred = px.histogram(
-                            results_df, 
-                            x='Prediction', 
-                            color='Model',
-                            title="Prediction Distribution by Model",
-                            barmode='group'
-                        )
-                        st.plotly_chart(fig_pred, use_container_width=True)
-                    
-                    with col_viz2:
-                        # Confidence distribution
-                        results_df['Confidence_Numeric'] = results_df['Confidence'].str.replace('%', '').astype(float)
-                        fig_conf = px.box(
-                            results_df,
-                            x='Model',
-                            y='Confidence_Numeric',
-                            title="Confidence Distribution by Model"
-                        )
-                        st.plotly_chart(fig_conf, use_container_width=True)
-                    
-                    # Summary statistics
-                    st.markdown("### 📊 Summary Statistics")
-                    
-                    summary_stats = results_df.groupby('Model').agg({
-                        'Confidence_Numeric': ['mean', 'std', 'min', 'max'],
-                        'Prediction': 'count'
-                    }).round(2)
-                    
-                    st.dataframe(summary_stats, use_container_width=True)
-                    
-                    # Export functionality
-                    col_exp1, col_exp2 = st.columns(2)
-                    with col_exp1:
-                        if st.button("📥 Export Results to CSV"):
-                            csv = results_df.to_csv(index=False)
-                            b64 = base64.b64encode(csv.encode()).decode()
-                            href = f'<a href="data:file/csv;base64,{b64}" download="batch_analysis_results.csv">📥 Download CSV</a>'
-                            st.markdown(href, unsafe_allow_html=True)
-                    
-                    with col_exp2:
-                        if st.button("📊 Generate Report"):
-                            st.markdown("### 📋 Analysis Report")
-                            
-                            total_images = len(uploaded_files)
-                            healthy_count = len(results_df[results_df['Prediction'] == 'Healthy'])
-                            diseased_count = total_images - healthy_count
-                            avg_confidence = results_df['Confidence_Numeric'].mean()
-                            
-                            st.markdown(f"""
-                            <div class="analysis-container">
-                                <h4>📊 Batch Analysis Report</h4>
-                                <p><strong>Total Images Processed:</strong> {total_images}</p>
-                                <p><strong>Healthy Plants:</strong> {healthy_count} ({healthy_count/total_images*100:.1f}%)</p>
-                                <p><strong>Diseased Plants:</strong> {diseased_count} ({diseased_count/total_images*100:.1f}%)</p>
-                                <p><strong>Average Confidence:</strong> {avg_confidence:.1f}%</p>
-                                <p><strong>Models Used:</strong> {', '.join(selected_models)}</p>
-                                <p><strong>Analysis Completed:</strong> {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
-                            </div>
-                            """, unsafe_allow_html=True)
-        
-        else:  # Single image or model comparison
-            uploaded_file = st.file_uploader(
-                "Upload Plant Leaf Image", 
-                type=["jpg", "png", "jpeg"], 
-                key="single_classify",
-                help="Upload a single image for detailed analysis"
-            )
-            
-            if uploaded_file:
-                image = Image.open(uploaded_file)
-                st.image(image, caption="📸 Uploaded Image", use_container_width=True)
-                
-                # Enhanced image information
-                st.markdown(f"""
-                <div class="analysis-container">
-                    <h4>📋 Image Properties</h4>
-                    <div class="stats-grid">
-                        <div>
-                            <p><strong>Filename:</strong> {uploaded_file.name}</p>
-                            <p><strong>Dimensions:</strong> {image.size[0]} x {image.size[1]}</p>
-                        </div>
-                        <div>
-                            <p><strong>Format:</strong> {image.format}</p>
-                            <p><strong>File Size:</strong> {uploaded_file.size / 1024:.1f} KB</p>
-                        </div>
-                    </div>
-                </div>
-                """, unsafe_allow_html=True)
-                
-                if st.button("🔍 Analyze with Selected Models", type="primary"):
-                    results = {}
-                    
-                    # Analysis progress
-                    with st.spinner("🔄 Running multi-model analysis..."):
-                        progress_bar = st.progress(0)
-                        status_text = st.empty()
-                        
-                        for i, model_name in enumerate(selected_models):
-                            status_text.text(f"🤖 Running {model_name}...")
-                            results[model_name] = analyze_image_advanced(image, model_name)
-                            update_analytics(results[model_name]['prediction'], results[model_name]['confidence'], model_name)
-                            progress_bar.progress((i + 1) / len(selected_models))
-                            time.sleep(0.2)
-                        
-                        status_text.text("✅ Analysis complete!")
-                    
-                    # Display results comparison
-                    st.markdown("### 🔬 Multi-Model Analysis Results")
-                    
-                    # Model comparison cards
-                    if len(selected_models) <= 3:
-                        cols = st.columns(len(selected_models))
-                    else:
-                        cols = st.columns(3)
-                    
-                    for i, (model_name, result) in enumerate(results.items()):
-                        with cols[i % 3]:
-                            confidence_color = "#4CAF50" if result['confidence'] > 80 else "#FF9800" if result['confidence'] > 60 else "#F44336"
-                            
-                            st.markdown(f"""
-                            <div class="model-card">
-                                <h4>{model_name}</h4>
-                                <h2>{result['disease_details']['icon']} {result['prediction']}</h2>
-                                <p style="color: white; font-size: 1.2em;"><strong>{result['confidence']:.1f}%</strong></p>
-                                <p><small>Analysis time: {result['analysis_time']:.3f}s</small></p>
-                            </div>
-                            """, unsafe_allow_html=True)
-                    
-                    # Detailed comparison table
-                    st.markdown("### 📊 Detailed Comparison")
-                    
-                    comparison_data = []
-                    for model_name, result in results.items():
-                        comparison_data.append({
-                            "Model": model_name,
-                            "Prediction": result['prediction'],
-                            "Confidence": f"{result['confidence']:.2f}%",
-                            "Confidence_Level": result['confidence_level'],
-                            "Analysis_Time": f"{result['analysis_time']:.3f}s"
-                        })
-                    
-                    comparison_df = pd.DataFrame(comparison_data)
-                    st.dataframe(comparison_df, use_container_width=True)
-                    
-                    # Consensus analysis
-                    st.markdown("### 🗳️ Consensus Analysis")
-                    
-                    predictions = [result['prediction'] for result in results.values()]
-                    confidences = [result['confidence'] for result in results.values()]
-                    
-                    # Find consensus
-                    from collections import Counter
-                    prediction_counts = Counter(predictions)
-                    consensus_prediction = prediction_counts.most_common(1)[0][0]
-                    consensus_count = prediction_counts.most_common(1)[0][1]
-                    
-                    avg_confidence = np.mean(confidences)
-                    consensus_strength = consensus_count / len(predictions) * 100
-                    
-                    st.markdown(f"""
-                    <div class="prediction-box">
-                        <h3>🎯 Consensus Result</h3>
-                        <h2>{disease_info[consensus_prediction]['icon']} {consensus_prediction}</h2>
-                        <p><strong>Consensus Strength:</strong> {consensus_strength:.1f}% ({consensus_count}/{len(predictions)} models agree)</p>
-                        <p><strong>Average Confidence:</strong> {avg_confidence:.1f}%</p>
-                        <p><strong>Recommendation:</strong> {"High confidence result" if consensus_strength > 66 else "Consider additional analysis"}</p>
-                    </div>
-                    """, unsafe_allow_html=True)
-                    
-                    # Probability distribution visualization
-                    if show_confidence_details:
-                        st.markdown("### 📈 Probability Analysis")
-                        
-                        # Collect all probabilities
-                        all_probs = {}
-                        for model_name, result in results.items():
-                            for disease, prob in result['all_probabilities'].items():
-                                if disease not in all_probs:
-                                    all_probs[disease] = []
-                                all_probs[disease].append(prob)
-                        
-                        # Create probability comparison chart
-                        prob_data = []
-                        for disease, probs in all_probs.items():
-                            prob_data.append({
-                                "Disease": disease,
-                                "Mean_Probability": np.mean(probs),
-                                "Std_Probability": np.std(probs),
-                                "Min_Probability": np.min(probs),
-                                "Max_Probability": np.max(probs)
-                            })
-                        
-                        prob_df = pd.DataFrame(prob_data)
-                        
-                        fig_prob = px.bar(
-                            prob_df,
-                            x='Disease',
-                            y='Mean_Probability',
-                            error_y='Std_Probability',
-                            title="Average Probability Distribution Across Models",
-                            color='Mean_Probability',
-                            color_continuous_scale='RdYlGn'
-                        )
-                        st.plotly_chart(fig_prob, use_container_width=True)
-                    
-                    # Feature importance analysis
-                    if show_feature_analysis:
-                        st.markdown("### 🔬 Feature Importance Analysis")
-                        
-                        # Average feature importance across models
-                        all_features = {}
-                        for model_name, result in results.items():
-                            for feature, importance in result['feature_importance'].items():
-                                if feature not in all_features:
-                                    all_features[feature] = []
-                                all_features[feature].append(importance)
-                        
-                        avg_features = {feature: np.mean(importances) for feature, importances in all_features.items()}
-                        top_features = sorted(avg_features.items(), key=lambda x: x[1], reverse=True)[:10]
-                        
-                        feature_df = pd.DataFrame(top_features, columns=['Feature', 'Average_Importance'])
-                        
-                        fig_features = px.bar(
-                            feature_df,
-                            x='Average_Importance',
-                            y='Feature',
-                            orientation='h',
-                            title="Top 10 Most Important Features (Averaged Across Models)",
-                            color='Average_Importance',
-                            color_continuous_scale='viridis'
-                        )
-                        st.plotly_chart(fig_features, use_container_width=True)
-                    
-                    # Add to history
-                    for model_name, result in results.items():
-                        st.session_state.history.append({
-                            "Mode": "Classification",
-                            "Model": model_name,
-                            "Prediction": result['prediction'],
-                            "Confidence": f"{result['confidence']:.2f}%",
-                            "Timestamp": result['timestamp'].strftime("%Y-%m-%d %H:%M:%S"),
-                            "User": result['user'],
-                            "Analysis_Time": f"{result['analysis_time']:.3f}s"
-                        })
-                    
-                    # Notification
-                    if enable_notifications:
-                        st.success(f"🔔 Analysis complete! Consensus: {consensus_prediction} ({consensus_strength:.1f}% agreement)")
-
-def show_treatment():
-    """Comprehensive treatment and prevention guide with structured viewer"""
-    st.markdown('<h1 class="main-header">💊 Treatment & Prevention Guide</h1>', unsafe_allow_html=True)
-    
-    # Header statistics
-    col1, col2, col3, col4 = st.columns(4)
-    with col1:
-        st.markdown("""
-        <div class="metric-card">
-            <h4>🦠 Diseases Covered</h4>
-            <h2>{}</h2>
-            <p>Comprehensive database</p>
-        </div>
-        """.format(len(disease_info)), unsafe_allow_html=True)
-    
-    with col2:
-        avg_success_rate = np.mean([info['success_rate'] for info in disease_info.values()])
-        st.markdown(f"""
-        <div class="metric-card">
-            <h4>📈 Avg Success Rate</h4>
-            <h2>{avg_success_rate:.1f}%</h2>
-            <p>Treatment effectiveness</p>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col3:
-        st.markdown("""
-        <div class="metric-card">
-            <h4>⏱️ Avg Duration</h4>
-            <h2>2-4</h2>
-            <p>Weeks to recovery</p>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col4:
-        st.markdown("""
-        <div class="metric-card">
-            <h4>🎯 Prevention Tips</h4>
-            <h2>15+</h2>
-            <p>Expert recommendations</p>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    # Main interface
-    col1, col2 = st.columns([2, 1])
-    
-    with col1:
-        # Disease selection with enhanced interface
-        st.markdown("### 🔍 Disease Selection & Overview")
-        
-        # Create disease cards for selection
-        selected_disease = st.selectbox(
-            "Select Disease Type",
-            list(disease_info.keys()),
-            help="Choose a disease to view comprehensive treatment information"
-        )
-        
-        disease_data = disease_info[selected_disease]
-        
-        # Enhanced disease overview
-        st.markdown(f"""
-        <div class="analysis-container">
-            <div style="text-align: center; padding: 2rem;">
-                <h1 style="font-size: 3rem;">{disease_data['icon']}</h1>
-                <h2 style="color: {disease_data['color']}; margin: 1rem 0;">{selected_disease}</h2>
-                <div class="stats-grid">
-                    <div style="background: {disease_data['color']}; color: white; padding: 1rem; border-radius: 8px;">
-                        <h4>🚨 Severity</h4>
-                        <p>{disease_data['severity']} (Level {disease_data['severity_level']}/4)</p>
-                    </div>
-                    <div style="background: linear-gradient(135deg, #4CAF50, #2196F3); color: white; padding: 1rem; border-radius: 8px;">
-                        <h4>📈 Success Rate</h4>
-                        <p>{disease_data['success_rate']}%</p>
-                    </div>
-                    <div style="background: linear-gradient(135deg, #FF9800, #F44336); color: white; padding: 1rem; border-radius: 8px;">
-                        <h4>⏱️ Duration</h4>
-                        <p>{disease_data['duration']}</p>
-                    </div>
-                    <div style="background: linear-gradient(135deg, #9C27B0, #673AB7); color: white; padding: 1rem; border-radius: 8px;">
-                        <h4>💰 Cost</h4>
-                        <p>{disease_data['cost']}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        # Detailed treatment protocol
-        st.markdown("### 💊 Comprehensive Treatment Protocol")
-        
-        # Treatment phases
-        treatment_phases = {
-            "Healthy": [
-                {"phase": "Maintenance", "duration": "Ongoing", "actions": ["Regular monitoring", "Optimal care conditions", "Preventive measures"]},
-            ],
-            "Rust": [
-                {"phase": "Immediate (Days 1-3)", "duration": "3 days", "actions": ["Isolate affected plant", "Apply copper fungicide", "Remove infected leaves"]},
-                {"phase": "Treatment (Days 4-14)", "duration": "10 days", "actions": ["Continue fungicide treatment", "Improve air circulation", "Monitor progress"]},
-                {"phase": "Recovery (Days 15-21)", "duration": "7 days", "actions": ["Reduce treatment frequency", "Assess recovery", "Maintain conditions"]},
-            ],
-            "Scab": [
-                {"phase": "Immediate (Days 1-3)", "duration": "3 days", "actions": ["Apply sulfur-based fungicide", "Improve drainage", "Remove affected parts"]},
-                {"phase": "Treatment (Days 4-21)", "duration": "18 days", "actions": ["Weekly fungicide application", "Monitor soil moisture", "Avoid overhead watering"]},
-                {"phase": "Recovery (Days 22-28)", "duration": "7 days", "actions": ["Evaluate treatment success", "Gradual return to normal care", "Long-term monitoring"]},
-            ],
-            "Multiple Diseases": [
-                {"phase": "Emergency (Days 1-5)", "duration": "5 days", "actions": ["Consult plant specialist", "Complete isolation", "Document all symptoms"]},
-                {"phase": "Intensive Care (Days 6-28)", "duration": "23 days", "actions": ["Follow specialist recommendations", "Multiple treatment approaches", "Daily monitoring"]},
-                {"phase": "Recovery Assessment (Days 29-42)", "duration": "14 days", "actions": ["Evaluate treatment effectiveness", "Adjust protocols", "Plan long-term care"]},
-            ]
-        }
-        
-        phases = treatment_phases.get(selected_disease, treatment_phases["Healthy"])
-        
-        for i, phase in enumerate(phases):
-            st.markdown(f"""
-            <div class="treatment-timeline">
-                <h4 style="color: {disease_data['color']};">📅 Phase {i+1}: {phase['phase']}</h4>
-                <p><strong>Duration:</strong> {phase['duration']}</p>
-                <h5>🔧 Actions to Take:</h5>
-                <ul>
-                    {"".join([f"<li>{action}</li>" for action in phase['actions']])}
-                </ul>
-            </div>
-            """, unsafe_allow_html=True)
-        
-        # Symptoms and identification
-        st.markdown("### 🔍 Symptoms & Identification")
-        
-        symptoms_cols = st.columns(2)
-        with symptoms_cols[0]:
-            st.markdown(f"""
-            <div class="feature-card">
-                <h4>🔍 Common Symptoms</h4>
-                <ul>
-                    {"".join([f"<li>{symptom}</li>" for symptom in disease_data['symptoms']])}
-                </ul>
-            </div>
-            """, unsafe_allow_html=True)
-        
-        with symptoms_cols[1]:
-            st.markdown(f"""
-            <div class="feature-card">
-                <h4>⚠️ Root Causes</h4>
-                <ul>
-                    {"".join([f"<li>{cause}</li>" for cause in disease_data['causes']])}
-                </ul>
-            </div>
-            """, unsafe_allow_html=True)
-        
-        # Prevention strategies
-        st.markdown("### 🛡️ Prevention Strategies")
-        
-        prevention_strategies = {
-            "Healthy": [
-                "Maintain consistent watering schedule",
-                "Provide adequate light conditions",
-                "Regular plant health inspections",
-                "Proper soil drainage",
-                "Appropriate fertilization"
-            ],
-            "Rust": [
-                "Ensure good air circulation around plants",
-                "Avoid overhead watering",
-                "Remove plant debris regularly",
-                "Don't overcrowd plants",
-                "Use drip irrigation when possible"
-            ],
-            "Scab": [
-                "Improve soil drainage",
-                "Water at soil level, not leaves",
-                "Remove fallen leaves promptly",
-                "Avoid working with wet plants",
-                "Use disease-resistant varieties"
-            ],
-            "Multiple Diseases": [
-                "Implement strict sanitation protocols",
-                "Quarantine new plants before introducing",
-                "Use sterilized tools for pruning",
-                "Monitor environmental conditions closely",
-                "Regular application of preventive treatments"
-            ]
-        }
-        
-        strategies = prevention_strategies.get(selected_disease, prevention_strategies["Healthy"])
-        
-        prevention_cols = st.columns(2)
-        for i, strategy in enumerate(strategies):
-            with prevention_cols[i % 2]:
-                st.markdown(f"""
-                <div class="feature-card">
-                    <h5>🛡️ Strategy {i+1}</h5>
-                    <p>{strategy}</p>
-                </div>
-                """, unsafe_allow_html=True)
-    
-    with col2:
-        # Treatment effectiveness visualization
-        st.markdown("### 📊 Treatment Analytics")
-        
-        # Success rates comparison
-        success_rates = {disease: info['success_rate'] for disease, info in disease_info.items()}
-        
-        fig_success = px.bar(
-            x=list(success_rates.keys()),
-            y=list(success_rates.values()),
-            title="Treatment Success Rates",
-            color=list(success_rates.values()),
-            color_continuous_scale="RdYlGn",
-            labels={'x': 'Disease', 'y': 'Success Rate (%)'}
-        )
-        st.plotly_chart(fig_success, use_container_width=True)
-        
-        # Severity levels
-        severity_levels = {disease: info['severity_level'] for disease, info in disease_info.items()}
-        
-        fig_severity = px.bar(
-            x=list(severity_levels.keys()),
-            y=list(severity_levels.values()),
-            title="Disease Severity Levels",
-            color=list(severity_levels.values()),
-            color_continuous_scale="RdYlBu_r",
-            labels={'x': 'Disease', 'y': 'Severity Level'}
-        )
-        st.plotly_chart(fig_severity, use_container_width=True)
-        
-        # Treatment timeline for selected disease
-        if selected_disease != "Healthy":
-            st.markdown("### ⏰ Treatment Timeline")
-            
-            timeline_data = []
-            phases = treatment_phases.get(selected_disease, [])
-            
-            for i, phase in enumerate(phases):
-                timeline_data.append({
-                    "Phase": f"Phase {i+1}",
-                    "Duration": phase['duration'],
-                    "Actions": len(phase['actions'])
-                })
-            
-            if timeline_data:
-                timeline_df = pd.DataFrame(timeline_data)
-                st.dataframe(timeline_df, use_container_width=True)
-        
-        # Quick reference guide
-        st.markdown("### 📋 Quick Reference")
-        
-        quick_ref = {
-            "Emergency Signs": ["Rapid wilting", "Extensive discoloration", "Spreading symptoms"],
-            "When to Seek Help": ["Multiple symptoms", "Treatment not working", "Rapid deterioration"],
-            "Essential Supplies": ["Fungicides", "Pruning tools", "Protective equipment"]
-        }
-        
-        for category, items in quick_ref.items():
-            st.markdown(f"""
-            <div class="feature-card">
-                <h5>{category}</h5>
-                <ul>
-                    {"".join([f"<li>{item}</li>" for item in items])}
-                </ul>
-            </div>
-            """, unsafe_allow_html=True)
-        
-        # Treatment history for user
-        user_treatments = [h for h in st.session_state.history if h['Prediction'] == selected_disease]
-        
-        if user_treatments:
-            st.markdown("### 📚 Your Treatment History")
-            st.metric("Cases Treated", len(user_treatments))
-            
-            if user_treatments:
-                last_treatment = user_treatments[-1]
-                st.markdown(f"""
-                <div class="notification">
-                    <strong>Last Case:</strong> {last_treatment['Timestamp']}<br>
-                    <strong>Confidence:</strong> {last_treatment['Confidence']}<br>
-                    <strong>Model:</strong> {last_treatment['Model']}
-                </div>
-                """, unsafe_allow_html=True)
-    
-    # Additional resources section
-    st.markdown("---")
-    st.markdown("## 📚 Additional Resources & Expert Tips")
-    
-    resource_cols = st.columns(3)
-    
-    with resource_cols[0]:
-        st.markdown("""
-        <div class="analysis-container">
-            <h4>📖 Educational Resources</h4>
-            <ul>
-                <li>🌱 Plant Care Best Practices Guide</li>
-                <li>🔬 Disease Identification Manual</li>
-                <li>💧 Optimal Watering Techniques</li>
-                <li>🌞 Light Requirements Database</li>
-                <li>🌡️ Temperature Control Methods</li>
-            </ul>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with resource_cols[1]:
-        st.markdown("""
-        <div class="analysis-container">
-            <h4>🏥 Emergency Protocols</h4>
-            <ul>
-                <li>🚨 Rapid Response Checklist</li>
-                <li>📞 When to Call Experts</li>
-                <li>🏥 Plant Hospital Locations</li>
-                <li>💊 Emergency Treatment Kit</li>
-                <li>📋 Symptom Documentation</li>
-            </ul>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with resource_cols[2]:
-        st.markdown("""
-        <div class="analysis-container">
-            <h4>🌿 Organic Alternatives</h4>
-            <ul>
-                <li>🌱 Natural Fungicides</li>
-                <li>🐛 Beneficial Insects</li>
-                <li>🌿 Companion Planting</li>
-                <li>🏺 Homemade Remedies</li>
-                <li>♻️ Sustainable Practices</li>
-            </ul>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    # Interactive treatment planner
-    st.markdown("---")
-    st.markdown("### 📅 Personal Treatment Planner")
-    
-    planner_cols = st.columns(2)
-    
-    with planner_cols[0]:
-        st.markdown("#### 📋 Create Treatment Plan")
-        
-        plant_name = st.text_input("🌱 Plant Name/ID", placeholder="e.g., Tomato Plant #1")
-        treatment_start = st.date_input("📅 Treatment Start Date", datetime.now().date())
-        severity = st.slider("🚨 Severity Assessment", 1, 4, disease_data['severity_level'])
-        notes = st.text_area("📝 Additional Notes", placeholder="Any specific observations or concerns...")
-        
-        if st.button("📋 Create Treatment Plan"):
-            plan = {
-                "plant_name": plant_name,
-                "disease": selected_disease,
-                "start_date": treatment_start.strftime("%Y-%m-%d"),
-                "severity": severity,
-                "notes": notes,
-                "created_by": st.session_state.username,
-                "created_at": datetime.now().isoformat()
-            }
-            
-            if 'treatment_plans' not in st.session_state:
-                st.session_state.treatment_plans = []
-            
-            st.session_state.treatment_plans.append(plan)
-            st.success("✅ Treatment plan created successfully!")
-    
-    with planner_cols[1]:
-        st.markdown("#### 📊 Your Treatment Plans")
-        
-        if 'treatment_plans' in st.session_state and st.session_state.treatment_plans:
-            user_plans = [p for p in st.session_state.treatment_plans if p['created_by'] == st.session_state.username]
-            
-            if user_plans:
-                for i, plan in enumerate(user_plans[-3:]):  # Show last 3 plans
-                    st.markdown(f"""
-                    <div class="feature-card">
-                        <h5>🌱 {plan['plant_name']}</h5>
-                        <p><strong>Disease:</strong> {plan['disease']}</p>
-                        <p><strong>Start Date:</strong> {plan['start_date']}</p>
-                        <p><strong>Severity:</strong> {plan['severity']}/4</p>
-                        <p><small>{plan['notes'][:50]}...</small></p>
-                    </div>
-                    """, unsafe_allow_html=True)
-            else:
-                st.info("No treatment plans created yet.")
-        else:
-            st.info("Create your first treatment plan above.")
-def show_batch_analysis():
-    """Advanced batch processing for multiple images with comprehensive analysis"""
-    st.markdown('<h1 class="main-header">📁 Batch Analysis Center</h1>', unsafe_allow_html=True)
-    
-    # Enhanced header with batch-specific metrics
-    col1, col2, col3, col4 = st.columns(4)
-    
-    with col1:
-        st.markdown("""
-        <div class="metric-card">
-            <h4>📊 Max Batch Size</h4>
-            <h2>50</h2>
-            <p>Images per batch</p>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col2:
-        st.markdown("""
-        <div class="metric-card">
-            <h4>⚡ Processing Speed</h4>
-            <h2>15</h2>
-            <p>Images per minute</p>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col3:
-        st.markdown("""
-        <div class="metric-card">
-            <h4>🎯 Batch Accuracy</h4>
-            <h2>96.3%</h2>
-            <p>Average precision</p>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col4:
-        total_batch_processed = sum(1 for h in st.session_state.history if h['Mode'] == 'Batch Analysis')
-        st.markdown(f"""
-        <div class="metric-card">
-            <h4>📈 Batches Processed</h4>
-            <h2>{total_batch_processed}</h2>
-            <p>This session</p>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    # Main batch interface
-    col1, col2 = st.columns([3, 1])
-    
-    with col1:
-        st.markdown("### 📤 Batch Upload Configuration")
-        
-        # Enhanced file uploader
-        uploaded_files = st.file_uploader(
-            "Upload Multiple Plant Images",
-            type=["jpg", "png", "jpeg"],
-            accept_multiple_files=True,
-            key="batch_analysis",
-            help="Select up to 50 images for batch analysis. Supported formats: JPG, PNG, JPEG"
-        )
-        
-        if uploaded_files:
-            if len(uploaded_files) > 50:
-                st.error("❌ Maximum 50 images allowed per batch. Please reduce your selection.")
-                return
-            
-            # Batch information display
-            st.markdown(f"""
-            <div class="analysis-container">
-                <h4>📋 Batch Information</h4>
-                <div class="stats-grid">
-                    <div>
-                        <p><strong>Images Selected:</strong> {len(uploaded_files)}</p>
-                        <p><strong>Total File Size:</strong> {sum(f.size for f in uploaded_files) / (1024*1024):.2f} MB</p>
-                    </div>
-                    <div>
-                        <p><strong>Estimated Processing Time:</strong> {len(uploaded_files) * 1.5:.1f} seconds</p>
-                        <p><strong>Batch ID:</strong> BATCH_{datetime.now().strftime('%Y%m%d_%H%M%S')}</p>
-                    </div>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
-            
-            # Display image preview grid
-            st.markdown("### 🖼️ Image Preview")
-            
-            # Create image grid
-            cols_per_row = 4
-            rows = [uploaded_files[i:i+cols_per_row] for i in range(0, len(uploaded_files), cols_per_row)]
-            
-            for row in rows[:2]:  # Show first 2 rows (8 images max)
-                cols = st.columns(cols_per_row)
-                for i, uploaded_file in enumerate(row):
-                    with cols[i]:
-                        image = Image.open(uploaded_file)
-                        st.image(image, caption=f"{uploaded_file.name[:20]}...", use_container_width=True)
-            
-            if len(uploaded_files) > 8:
-                st.markdown(f"<p style='text-align: center; color: #666;'>... and {len(uploaded_files) - 8} more images</p>", unsafe_allow_html=True)
-            
-            # Batch processing configuration
-            st.markdown("### ⚙️ Processing Configuration")
-            
-            config_cols = st.columns(3)
-            
-            with config_cols[0]:
-                # Model selection for batch
-                batch_model = st.selectbox(
-                    "🤖 Select Model for Batch",
-                    list(models.keys()),
-                    index=list(models.keys()).index("Voting Ensemble") if "Voting Ensemble" in models else 0,
-                    help="Choose the model for batch processing"
-                )
-            
-            with config_cols[1]:
-                # Processing options
-                parallel_processing = st.checkbox("⚡ Enable Parallel Processing", True)
-                save_results = st.checkbox("💾 Save Results to History", True)
-                generate_report = st.checkbox("📊 Generate Detailed Report", True)
-            
-            with config_cols[2]:
-                # Output format options
-                output_formats = st.multiselect(
-                    "📥 Export Formats",
-                    ["CSV", "JSON", "Excel", "PDF Report"],
-                    default=["CSV"],
-                    help="Choose output formats for results"
-                )
-            
-            # Advanced batch options
-            with st.expander("🔧 Advanced Options"):
-                col_adv1, col_adv2 = st.columns(2)
-                
-                with col_adv1:
-                    confidence_threshold = st.slider(
-                        "🎯 Confidence Threshold",
-                        0.0, 1.0, 0.5,
-                        help="Minimum confidence for valid predictions"
-                    )
-                    
-                    batch_size = st.slider(
-                        "📦 Processing Batch Size",
-                        1, 20, 10,
-                        help="Number of images to process simultaneously"
-                    )
-                
-                with col_adv2:
-                    include_feature_analysis = st.checkbox("🔬 Include Feature Analysis", False)
-                    include_thumbnails = st.checkbox("🖼️ Include Image Thumbnails", True)
-                    
-                    error_handling = st.selectbox(
-                        "❌ Error Handling",
-                        ["Skip errors", "Stop on error", "Retry failed"],
-                        index=0
-                    )
-            
-            # Process batch button
-            if st.button("🚀 Process Batch", type="primary"):
-                batch_id = f"BATCH_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-                
-                # Initialize batch processing
-                st.markdown("### 🔄 Processing Progress")
-                
-                # Progress containers
-                progress_container = st.container()
-                results_container = st.container()
-                
-                with progress_container:
-                    # Overall progress
-                    overall_progress = st.progress(0)
-                    status_text = st.empty()
-                    
-                    # Detailed progress info
-                    progress_cols = st.columns(4)
-                    with progress_cols[0]:
-                        processed_metric = st.metric("Processed", "0")
-                    with progress_cols[1]:
-                        success_metric = st.metric("Successful", "0")
-                    with progress_cols[2]:
-                        failed_metric = st.metric("Failed", "0")
-                    with progress_cols[3]:
-                        avg_time_metric = st.metric("Avg Time", "0.0s")
-                    
-                    # Processing results storage
-                    batch_results = []
-                    processing_times = []
-                    successful_count = 0
-                    failed_count = 0
-                    
-                    # Process images in batches
-                    for i, uploaded_file in enumerate(uploaded_files):
-                        try:
-                            # Update status
-                            status_text.text(f"🔄 Processing {uploaded_file.name}...")
-                            
-                            # Process image
-                            start_time = time.time()
-                            image = Image.open(uploaded_file)
-                            
-                            # Analyze image
-                            result = analyze_image_advanced(image, batch_model)
-                            processing_time = time.time() - start_time
-                            processing_times.append(processing_time)
-                            
-                            # Check confidence threshold
-                            if result['confidence'] >= confidence_threshold * 100:
-                                status = "✅ Success"
-                                successful_count += 1
-                            else:
-                                status = "⚠️ Low Confidence"
-                                successful_count += 1  # Still counts as processed
-                            
-                            # Store result
-                            batch_results.append({
-                                "Batch_ID": batch_id,
-                                "Image_Name": uploaded_file.name,
-                                "File_Size_KB": uploaded_file.size / 1024,
-                                "Prediction": result['prediction'],
-                                "Confidence": result['confidence'],
-                                "Processing_Time": processing_time,
-                                "Status": status,
-                                "Model": batch_model,
-                                "Timestamp": result['timestamp'].strftime("%Y-%m-%d %H:%M:%S"),
-                                "User": st.session_state.username
-                            })
-                            
-                            # Update analytics
-                            if save_results:
-                                update_analytics(result['prediction'], result['confidence'], batch_model)
-                            
-                        except Exception as e:
-                            failed_count += 1
-                            batch_results.append({
-                                "Batch_ID": batch_id,
-                                "Image_Name": uploaded_file.name,
-                                "File_Size_KB": uploaded_file.size / 1024,
-                                "Prediction": "Error",
-                                "Confidence": 0,
-                                "Processing_Time": 0,
-                                "Status": f"❌ Error: {str(e)[:50]}",
-                                "Model": batch_model,
-                                "Timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                                "User": st.session_state.username
-                            })
-                            
-                            if error_handling == "Stop on error":
-                                st.error(f"❌ Processing stopped due to error: {str(e)}")
-                                break
-                        
-                        # Update progress
-                        progress = (i + 1) / len(uploaded_files)
-                        overall_progress.progress(progress)
-                        
-                        # Update metrics
-                        processed_metric.metric("Processed", f"{i + 1}/{len(uploaded_files)}")
-                        success_metric.metric("Successful", successful_count)
-                        failed_metric.metric("Failed", failed_count)
-                        
-                        if processing_times:
-                            avg_time = np.mean(processing_times)
-                            avg_time_metric.metric("Avg Time", f"{avg_time:.2f}s")
-                        
-                        # Small delay for visual feedback
-                        time.sleep(0.05)
-                    
-                    status_text.text("✅ Batch processing completed!")
-                
-                # Display results
-                with results_container:
-                    st.markdown("### 📊 Batch Processing Results")
-                    
-                    # Summary statistics
-                    total_processed = len(batch_results)
-                    successful_predictions = sum(1 for r in batch_results if r['Status'].startswith('✅'))
-                    failed_predictions = sum(1 for r in batch_results if r['Status'].startswith('❌'))
-                    low_confidence = sum(1 for r in batch_results if r['Status'].startswith('⚠️'))
-                    
-                    summary_cols = st.columns(4)
-                    with summary_cols[0]:
-                        st.metric("Total Processed", total_processed)
-                    with summary_cols[1]:
-                        st.metric("Successful", successful_predictions, f"{successful_predictions/total_processed*100:.1f}%")
-                    with summary_cols[2]:
-                        st.metric("Low Confidence", low_confidence, f"{low_confidence/total_processed*100:.1f}%")
-                    with summary_cols[3]:
-                        st.metric("Failed", failed_predictions, f"{failed_predictions/total_processed*100:.1f}%")
-                    
-                    # Results table
-                    results_df = pd.DataFrame(batch_results)
-                    st.dataframe(results_df, use_container_width=True)
-                    
-                    # Visualizations
-                    viz_cols = st.columns(2)
-                    
-                    with viz_cols[0]:
-                        # Prediction distribution
-                        pred_counts = results_df['Prediction'].value_counts()
-                        fig_pred = px.pie(
-                            values=pred_counts.values,
-                            names=pred_counts.index,
-                            title="Prediction Distribution"
-                        )
-                        st.plotly_chart(fig_pred, use_container_width=True)
-                    
-                    with viz_cols[1]:
-                        # Confidence distribution
-                        fig_conf = px.histogram(
-                            results_df,
-                            x='Confidence',
-                            nbins=20,
-                            title="Confidence Distribution"
-                        )
-                        st.plotly_chart(fig_conf, use_container_width=True)
-                    
-                    # Processing time analysis
-                    if processing_times:
-                        st.markdown("### ⏱️ Performance Analysis")
-                        
-                        perf_cols = st.columns(3)
-                        with perf_cols[0]:
-                            st.metric("Average Time", f"{np.mean(processing_times):.2f}s")
-                        with perf_cols[1]:
-                            st.metric("Fastest", f"{np.min(processing_times):.2f}s")
-                        with perf_cols[2]:
-                            st.metric("Slowest", f"{np.max(processing_times):.2f}s")
-                        
-                        # Processing time chart
-                        fig_time = px.line(
-                            y=processing_times,
-                            title="Processing Time per Image",
-                            labels={'y': 'Time (seconds)', 'x': 'Image Index'}
-                        )
-                        st.plotly_chart(fig_time, use_container_width=True)
-                    
-                    # Generate detailed report
-                    if generate_report:
-                        st.markdown("### 📋 Detailed Batch Report")
-                        
-                        # Disease summary
-                        disease_summary = results_df.groupby('Prediction').agg({
-                            'Confidence': ['mean', 'std', 'count'],
-                            'Processing_Time': 'mean'
-                        }).round(2)
-                        
-                        st.markdown("#### 🦠 Disease Analysis Summary")
-                        st.dataframe(disease_summary, use_container_width=True)
-                        
-                        # Quality metrics
-                        high_conf_count = sum(1 for r in batch_results if r['Confidence'] >= 80)
-                        medium_conf_count = sum(1 for r in batch_results if 60 <= r['Confidence'] < 80)
-                        low_conf_count = sum(1 for r in batch_results if r['Confidence'] < 60)
-                        
-                        st.markdown("#### 🎯 Quality Assessment")
-                        quality_data = {
-                            "Confidence Level": ["High (≥80%)", "Medium (60-80%)", "Low (<60%)"],
-                            "Count": [high_conf_count, medium_conf_count, low_conf_count],
-                            "Percentage": [
-                                f"{high_conf_count/total_processed*100:.1f}%",
-                                f"{medium_conf_count/total_processed*100:.1f}%",
-                                f"{low_conf_count/total_processed*100:.1f}%"
-                            ]
-                        }
-                        
-                        quality_df = pd.DataFrame(quality_data)
-                        st.dataframe(quality_df, use_container_width=True)
-                        
-                        # Recommendations
-                        st.markdown("#### 💡 Recommendations")
-                        
-                        recommendations = []
-                        if failed_count > 0:
-                            recommendations.append("⚠️ Review failed images for quality issues")
-                        if low_conf_count > total_processed * 0.2:
-                            recommendations.append("🔍 Consider retaking images with low confidence")
-                        if successful_count / total_processed > 0.9:
-                            recommendations.append("✅ Excellent batch quality - results highly reliable")
-                        
-                        for rec in recommendations:
-                            st.markdown(f"- {rec}")
-                    
-                    # Export functionality
-                    if output_formats:
-                        st.markdown("### 📥 Export Results")
-                        
-                        export_cols = st.columns(len(output_formats))
-                        
-                        for i, format_type in enumerate(output_formats):
-                            with export_cols[i]:
-                                if format_type == "CSV":
-                                    if st.button(f"📄 Export {format_type}", key=f"export_{format_type}"):
-                                        csv = results_df.to_csv(index=False)
-                                        b64 = base64.b64encode(csv.encode()).decode()
-                                        href = f'<a href="data:file/csv;base64,{b64}" download="{batch_id}_results.csv">📥 Download CSV</a>'
-                                        st.markdown(href, unsafe_allow_html=True)
-                                
-                                elif format_type == "JSON":
-                                    if st.button(f"📄 Export {format_type}", key=f"export_{format_type}"):
-                                        json_data = results_df.to_json(orient='records', indent=2)
-                                        b64 = base64.b64encode(json_data.encode()).decode()
-                                        href = f'<a href="data:file/json;base64,{b64}" download="{batch_id}_results.json">📥 Download JSON</a>'
-                                        st.markdown(href, unsafe_allow_html=True)
-                    
-                    # Save to history
-                    if save_results:
-                        for result in batch_results:
-                            if result['Status'].startswith('✅'):
-                                st.session_state.history.append({
-                                    "Mode": "Batch Analysis",
-                                    "Model": result['Model'],
-                                    "Prediction": result['Prediction'],
-                                    "Confidence": f"{result['Confidence']:.2f}%",
-                                    "Timestamp": result['Timestamp'],
-                                    "User": result['User'],
-                                    "Batch_ID": batch_id
-                                })
-                        
-                        st.success(f"✅ Batch {batch_id} completed successfully!")
-    
-    with col2:
-        st.markdown("### 📊 Batch Analytics")
-        
-        # Recent batch history
-        batch_history = [h for h in st.session_state.history if h['Mode'] == 'Batch Analysis']
-        
-        if batch_history:
-            st.markdown("#### 📈 Recent Batches")
-            
-            # Get unique batch IDs
-            batch_ids = list(set([h.get('Batch_ID', 'Unknown') for h in batch_history]))
-            recent_batches = batch_ids[-5:]  # Last 5 batches
-            
-            for batch_id in recent_batches:
-                batch_items = [h for h in batch_history if h.get('Batch_ID') == batch_id]
-                
-                if batch_items:
-                    st.markdown(f"""
-                    <div class="feature-card">
-                        <h5>📦 {batch_id}</h5>
-                        <p><strong>Images:</strong> {len(batch_items)}</p>
-                        <p><strong>Model:</strong> {batch_items[0]['Model']}</p>
-                        <p><strong>Time:</strong> {batch_items[0]['Timestamp']}</p>
-                    </div>
-                    """, unsafe_allow_html=True)
-        
-        # Batch performance metrics
-        if batch_history:
-            st.markdown("#### 🎯 Performance Metrics")
-            
-            # Calculate batch-specific metrics
-            total_batch_images = len(batch_history)
-            healthy_in_batches = sum(1 for h in batch_history if h['Prediction'] == 'Healthy')
-            
-            st.metric("Total Batch Images", total_batch_images)
-            st.metric("Healthy Rate", f"{healthy_in_batches/total_batch_images*100:.1f}%")
-            
-            # Batch model usage
-            batch_models = [h['Model'] for h in batch_history]
-            model_counts = pd.Series(batch_models).value_counts()
-            
-            if len(model_counts) > 0:
-                fig_batch_models = px.bar(
-                    x=model_counts.index,
-                    y=model_counts.values,
-                    title="Batch Model Usage"
-                )
-                st.plotly_chart(fig_batch_models, use_container_width=True)
-        
-        # Batch processing tips
-        st.markdown("#### 💡 Batch Processing Tips")
-        
-        tips = [
-            "📸 Ensure consistent lighting across all images",
-            "🔍 Use similar image sizes for better processing",
-            "📱 Organize images by plant type before upload",
-            "⚡ Enable parallel processing for faster results",
-            "💾 Always save results for future reference"
-        ]
-        
-        for tip in tips:
-            st.markdown(f"- {tip}")
-        
-        # System resources
-        st.markdown("#### 🖥️ System Resources")
-        
-        st.metric("Available Memory", "8.2 GB")
-        st.metric("CPU Usage", "45%")
-        st.metric("Queue Status", "0 pending")
-def show_user_management():
-    """Comprehensive user management interface for administrators"""
-    if st.session_state.user_role != 'admin':
-        st.error("❌ Access denied. Administrator privileges required.")
-        return
-    
-    st.markdown('<h1 class="main-header">👥 User Management System</h1>', unsafe_allow_html=True)
-    
-    # Admin dashboard header
-    col1, col2, col3, col4 = st.columns(4)
-    
-    with col1:
-        st.markdown(f"""
-        <div class="metric-card">
-            <h4>👤 Total Users</h4>
-            <h2>{len(st.session_state.users)}</h2>
-            <p>Registered accounts</p>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col2:
-        active_users = len(st.session_state.analytics.get('user_activity', {}))
-        st.markdown(f"""
-        <div class="metric-card">
-            <h4>🟢 Active Users</h4>
-            <h2>{active_users}</h2>
-            <p>Users with activity</p>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col3:
-        admin_count = sum(1 for user in st.session_state.users.values() if user['role'] == 'admin')
-        st.markdown(f"""
-        <div class="metric-card">
-            <h4>👑 Administrators</h4>
-            <h2>{admin_count}</h2>
-            <p>Admin accounts</p>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col4:
-        total_predictions = sum(st.session_state.analytics.get('user_activity', {}).values())
-        st.markdown(f"""
-        <div class="metric-card">
-            <h4>📊 Total Predictions</h4>
-            <h2>{total_predictions}</h2>
-            <p>System-wide</p>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    # Main management interface
-    tab1, tab2, tab3, tab4 = st.tabs(["👥 User Directory", "➕ Add User", "📊 User Analytics", "🔧 System Settings"])
-    
-    with tab1:
-        st.markdown("### 📋 User Directory")
-        
-        # Enhanced user table
-        users_data = []
-        for username, user_info in st.session_state.users.items():
-            last_login = user_info.get('last_login', 'Never')
-            if last_login != 'Never':
-                last_login = datetime.fromisoformat(last_login).strftime('%Y-%m-%d %H:%M')
-            
-            users_data.append({
-                'Username': username,
-                'Role': user_info['role'].title(),
-                'Created': user_info['created_at'][:10],
-                'Last Login': last_login,
-                'Total Predictions': user_info.get('total_predictions', 0),
-                'Status': '🟢 Active' if username in st.session_state.analytics.get('user_activity', {}) else '⚪ Inactive'
-            })
-        
-        users_df = pd.DataFrame(users_data)
-        st.dataframe(users_df, use_container_width=True)
-        
-        # User management actions
-        st.markdown("### 🔧 User Management Actions")
-        
-        action_cols = st.columns(3)
-        
-        with action_cols[0]:
-            st.markdown("#### 🔒 Password Management")
-            
-            selected_user = st.selectbox(
-                "Select User",
-                list(st.session_state.users.keys()),
-                key="password_user"
-            )
-            
-            new_password = st.text_input(
-                "New Password",
-                type="password",
-                key="admin_new_password"
-            )
-            
-            if st.button("🔑 Reset Password"):
-                if len(new_password) >= 6:
-                    st.session_state.users[selected_user]['password'] = hash_password(new_password)
-                    st.success(f"✅ Password reset for {selected_user}")
-                else:
-                    st.error("❌ Password must be at least 6 characters")
-        
-        with action_cols[1]:
-            st.markdown("#### 👑 Role Management")
-            
-            role_user = st.selectbox(
-                "Select User",
-                list(st.session_state.users.keys()),
-                key="role_user"
-            )
-            
-            current_role = st.session_state.users[role_user]['role']
-            new_role = st.selectbox(
-                "New Role",
-                ["user", "admin"],
-                index=0 if current_role == "user" else 1
-            )
-            
-            if st.button("🔄 Update Role"):
-                if role_user == st.session_state.username and new_role != 'admin':
-                    st.error("❌ Cannot demote yourself from admin")
-                else:
-                    st.session_state.users[role_user]['role'] = new_role
-                    st.success(f"✅ Role updated: {role_user} → {new_role}")
-        
-        with action_cols[2]:
-            st.markdown("#### 🗑️ User Deletion")
-            
-            delete_user = st.selectbox(
-                "Select User to Delete",
-                [u for u in st.session_state.users.keys() if u != st.session_state.username],
-                key="delete_user"
-            )
-            
-            if delete_user:
-                st.warning(f"⚠️ This will permanently delete user: {delete_user}")
-                
-                if st.button("🗑️ Delete User", type="secondary"):
-                    if delete_user in st.session_state.users:
-                        del st.session_state.users[delete_user]
-                        # Clean up user activity
-                        if delete_user in st.session_state.analytics.get('user_activity', {}):
-                            del st.session_state.analytics['user_activity'][delete_user]
-                        st.success(f"✅ User {delete_user} deleted successfully")
-                        st.rerun()
-    
-    with tab2:
-        st.markdown("### ➕ Add New User")
-        
-        # Enhanced user creation form
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            st.markdown("#### 👤 Basic Information")
-            
-            new_username = st.text_input(
-                "Username",
-                placeholder="Enter username",
-                help="Must be unique and at least 3 characters"
-            )
-            
-            new_password = st.text_input(
-                "Password",
-                type="password",
-                help="Must be at least 6 characters"
-            )
-            
-            confirm_password = st.text_input(
-                "Confirm Password",
-                type="password"
-            )
-            
-            new_role = st.selectbox(
-                "Role",
-                ["user", "admin"],
-                help="Select user role and permissions"
-            )
-        
-        with col2:
-            st.markdown("#### 📋 User Permissions")
-            
-            permissions = {
-                "can_analyze": st.checkbox("🔬 Can analyze images", True),
-                "can_batch_process": st.checkbox("📁 Can batch process", True),
-                "can_export_data": st.checkbox("📥 Can export data", True),
-                "can_view_history": st.checkbox("📊 Can view history", True)
-            }
-            
-            # Initial settings
-            initial_settings = {
-                "theme": st.selectbox("🎨 Default Theme", ["🌞 Light", "🌙 Dark", "🌈 Colorful"]),
-                "auto_analyze": st.checkbox("🔄 Auto-analyze enabled", False),
-                "notifications": st.checkbox("🔔 Notifications enabled", True)
-            }
-        
-        # Create user button
-        if st.button("➕ Create User", type="primary"):
-            # Validation
-            if not new_username or len(new_username) < 3:
-                st.error("❌ Username must be at least 3 characters")
-            elif new_username in st.session_state.users:
-                st.error("❌ Username already exists")
-            elif len(new_password) < 6:
-                st.error("❌ Password must be at least 6 characters")
-            elif new_password != confirm_password:
-                st.error("❌ Passwords don't match")
-            else:
-                # Create user
-                st.session_state.users[new_username] = {
-                    'password': hash_password(new_password),
-                    'role': new_role,
-                    'created_at': datetime.now().isoformat(),
-                    'last_login': 'Never',
-                    'total_predictions': 0,
-                    'permissions': permissions,
-                    'settings': initial_settings,
-                    'created_by': st.session_state.username
-                }
-                
-                st.success(f"✅ User {new_username} created successfully!")
-                st.rerun()
-    
-    with tab3:
-        st.markdown("### 📊 User Analytics Dashboard")
-        
-        # User activity analysis
-        if st.session_state.analytics.get('user_activity'):
-            col1, col2 = st.columns(2)
-            
-            with col1:
-                # User activity chart
-                activity_data = st.session_state.analytics['user_activity']
-                
-                fig_activity = px.bar(
-                    x=list(activity_data.keys()),
-                    y=list(activity_data.values()),
-                    title="User Activity (Predictions per User)",
-                    labels={'x': 'User', 'y': 'Predictions'}
-                )
-                st.plotly_chart(fig_activity, use_container_width=True)
-            
-            with col2:
-                # User role distribution
-                roles = [user['role'] for user in st.session_state.users.values()]
-                role_counts = pd.Series(roles).value_counts()
-                
-                fig_roles = px.pie(
-                    values=role_counts.values,
-                    names=role_counts.index,
-                    title="User Role Distribution"
-                )
-                st.plotly_chart(fig_roles, use_container_width=True)
-        
-        # User performance metrics
-        st.markdown("#### 🎯 User Performance Metrics")
-        
-        performance_data = []
-        for username, user_info in st.session_state.users.items():
-            user_history = [h for h in st.session_state.history if h['User'] == username]
-            
-            if user_history:
-                avg_confidence = np.mean([float(h['Confidence'].replace('%', '')) for h in user_history])
-                performance_data.append({
-                    'User': username,
-                    'Total Predictions': len(user_history),
-                    'Average Confidence': f"{avg_confidence:.1f}%",
-                    'Last Activity': user_history[-1]['Timestamp'],
-                    'Favorite Model': max(set([h['Model'] for h in user_history]), key=[h['Model'] for h in user_history].count)
-                })
-        
-        if performance_data:
-            performance_df = pd.DataFrame(performance_data)
-            st.dataframe(performance_df, use_container_width=True)
-        
-        # System usage trends
-        st.markdown("#### 📈 System Usage Trends")
-        
-        if st.session_state.analytics.get('daily_predictions'):
-            daily_data = st.session_state.analytics['daily_predictions']
-            
-            fig_daily = px.line(
-                x=list(daily_data.keys()),
-                y=list(daily_data.values()),
-                title="Daily Prediction Trends",
-                labels={'x': 'Date', 'y': 'Predictions'}
-            )
-            st.plotly_chart(fig_daily, use_container_width=True)
-    
-    with tab4:
-        st.markdown("### 🔧 System Settings")
-        
-        # System configuration
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            st.markdown("#### 🛠️ System Configuration")
-            
-            # System limits
-            max_users = st.number_input("👥 Maximum Users", min_value=1, max_value=1000, value=100)
-            max_predictions_per_user = st.number_input("📊 Max Predictions per User", min_value=10, max_value=10000, value=1000)
-            session_timeout = st.number_input("⏰ Session Timeout (hours)", min_value=1, max_value=24, value=8)
-            
-            # Feature toggles
-            st.markdown("#### 🔄 Feature Toggles")
-            
-            allow_user_registration = st.checkbox("📝 Allow User Registration", True)
-# --- Supporting Functions ---
-def show_analytics():
-    """Alias for show_history or enhanced analytics"""
-    show_history()  # Use your existing function or enhance it
-
-def show_system_status():
-    """System status page for admins"""
-    if st.session_state.user_role != 'admin':
-        st.error("❌ Access denied. Administrator privileges required.")
-        return
-    
-    st.markdown('<h1 class="main-header">🖥️ System Status</h1>', unsafe_allow_html=True)
-    
-    # Add system monitoring content here
-    col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        st.metric("System Uptime", "2h 45m")
-        st.metric("Memory Usage", "4.2 GB")
-    
-    with col2:
-        st.metric("Active Sessions", len(st.session_state.users))
-        st.metric("Models Loaded", len(models) if models else 0)
-    
-    with col3:
-        st.metric("Total Predictions", st.session_state.analytics['total_predictions'])
-        st.metric("Error Rate", "0.1%")
-
-# --- Enhanced Sidebar with Reorganized Navigation ---
+# --- Enhanced Sidebar with User Info ---
 def setup_sidebar():
-    """Setup sidebar with Navigation Hub above Control Panel"""
-    
+    """Setup sidebar with user information and preferences"""
     # User info section
     st.sidebar.markdown(f"""
     <div class="user-info">
         <h4>👤 Welcome, {st.session_state.username}!</h4>
         <p>🔑 Role: {st.session_state.user_role.title()}</p>
         <p>⏰ {datetime.now().strftime('%Y-%m-%d %H:%M')}</p>
-        <p>📊 Session: {st.session_state.session_info['predictions_this_session']} predictions</p>
     </div>
     """, unsafe_allow_html=True)
     
@@ -2434,49 +416,10 @@ def setup_sidebar():
         st.rerun()
     
     st.sidebar.markdown("---")
+    st.sidebar.markdown("## 🎛️ Control Panel")
     
-    # Navigation Hub (moved above Control Panel)
-    st.sidebar.markdown("""
-    <div class="nav-section">
-        <h3>🧭 Navigation Hub</h3>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # Base activities for all users
-    activities = {
-        "🏠 Home": "About Project",
-        "🔬 AI Scanner": "Plant Disease", 
-        "📊 Analytics": "Analytics",
-        "⚙️ Settings": "Settings"
-    }
-    
-    # Add admin-only features
-    if st.session_state.user_role == 'admin':
-        activities["👥 User Management"] = "User Management"
-        activities["🖥️ System Status"] = "System Status"
-    
-    activity = st.sidebar.selectbox("📍 Main Section", list(activities.keys()))
-    
-    # AI Scanner sub-navigation
-    if activity == "🔬 AI Scanner":
-        tasks = {
-            "🩺 Quick Detection": "Detection",
-            "🧠 Advanced Classification": "Classification", 
-            "💊 Treatment Guide": "Treatment",
-            "🔍 Batch Analysis": "Batch Analysis"
-        }
-        task = st.sidebar.selectbox("🎯 AI Tools", list(tasks.keys()))
-    
-    # Control Panel (moved below Navigation Hub)
-    st.sidebar.markdown("---")
-    st.sidebar.markdown("""
-    <div class="nav-section">
-        <h3>🎛️ Control Panel</h3>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # Theme selection (removed pastel)
-    theme_options = ["🌞 Light", "🌙 Dark", "🌈 Colorful"]
+    # Theme selection
+    theme_options = ["🌞 Light", "🌙 Dark", "🌈 Colorful", "🌸 Pastel"]
     selected_theme = st.sidebar.selectbox(
         "🎨 Theme", 
         theme_options,
@@ -2498,354 +441,261 @@ def setup_sidebar():
         "📊 Show advanced metrics", 
         st.session_state.user_preferences['show_advanced_metrics']
     )
-    st.session_state.user_preferences['show_confidence_details'] = st.sidebar.checkbox(
-        "🎯 Show confidence details", 
-        st.session_state.user_preferences['show_confidence_details']
-    )
     st.session_state.user_preferences['notification_enabled'] = st.sidebar.checkbox(
         "🔔 Enable notifications", 
         st.session_state.user_preferences['notification_enabled']
     )
     
-    # Default model selection
-    st.session_state.user_preferences['default_model'] = st.sidebar.selectbox(
-        "🤖 Default Model",
-        list(models.keys()) if models else ["Voting Ensemble"],
-        index=0
-    )
-    
-    # Live System Status
-    st.sidebar.markdown("### 🔄 Live System Status")
-    if st.session_state.system_status['models_loaded']:
-        st.sidebar.success("✅ Models: Ready")
-    else:
-        st.sidebar.error("❌ Models: Loading")
-    
-    # Real-time analytics
-    st.sidebar.markdown("### 📈 Live Analytics")
-    
-    # Create metrics in a grid layout
+    # Analytics dashboard
+    st.sidebar.markdown("### 📈 Quick Stats")
     col1, col2 = st.sidebar.columns(2)
     with col1:
         st.metric("Total Scans", st.session_state.analytics['total_predictions'])
-        st.metric("This Session", st.session_state.session_info['predictions_this_session'])
     with col2:
         healthy_ratio = (st.session_state.analytics['healthy_count'] / 
                         max(st.session_state.analytics['total_predictions'], 1)) * 100
         st.metric("Healthy %", f"{healthy_ratio:.1f}%")
-        
-        avg_confidence = np.mean(st.session_state.analytics['accuracy_scores']) if st.session_state.analytics['accuracy_scores'] else 0
-        st.metric("Avg Confidence", f"{avg_confidence:.1f}%")
-    
-    # Quick performance metrics
-    if st.session_state.analytics['accuracy_scores']:
-        recent_scores = st.session_state.analytics['accuracy_scores'][-10:]
-        trend = "📈" if len(recent_scores) > 1 and recent_scores[-1] > recent_scores[-2] else "📉"
-        st.sidebar.metric("Recent Trend", trend)
     
     # Admin-only features
     if st.session_state.user_role == 'admin':
         st.sidebar.markdown("---")
         st.sidebar.markdown("### 👨‍💼 Admin Panel")
         
-        # System metrics
-        total_users = len(st.session_state.users)
-        active_users = len(st.session_state.analytics['user_activity'])
+        if st.sidebar.button("👥 Manage Users"):
+            st.session_state.show_user_management = True
         
-        st.sidebar.metric("Total Users", total_users)
-        st.sidebar.metric("Active Users", active_users)
-        
-        if st.sidebar.button("🔄 Refresh System"):
-            st.rerun()
+        if st.sidebar.button("📊 System Analytics"):
+            st.session_state.show_system_analytics = True
+
+# --- User Management (Admin Only) ---
+def show_user_management():
+    """Show user management interface for admins"""
+    if st.session_state.user_role != 'admin':
+        st.error("❌ Access denied. Admin privileges required.")
+        return
     
-    return activities[activity], task
+    st.markdown('<h1 class="main-header">👥 User Management</h1>', unsafe_allow_html=True)
+    
+    # Display all users
+    st.markdown("### 📋 Registered Users")
+    
+    users_data = []
+    for username, user_info in st.session_state.users.items():
+        users_data.append({
+            'Username': username,
+            'Role': user_info['role'],
+            'Created': user_info['created_at'][:10]  # Show only date
+        })
+    
+    users_df = pd.DataFrame(users_data)
+    st.dataframe(users_df, use_container_width=True)
+    
+    # Add new user (admin only)
+    st.markdown("### ➕ Add New User")
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        new_username = st.text_input("Username")
+    with col2:
+        new_password = st.text_input("Password", type="password")
+    with col3:
+        new_role = st.selectbox("Role", ["user", "admin"])
+    
+    if st.button("➕ Add User"):
+        success, message = register_user(new_username, new_password, new_role)
+        if success:
+            st.success(f"✅ {message}")
+            st.rerun()
+        else:
+            st.error(f"❌ {message}")
 
 # --- Enhanced Detection Page ---
 def show_detection():
-    """Enhanced detection page with detailed analysis"""
+    """Enhanced detection page with authentication features"""
     st.markdown('<h1 class="main-header">🩺 AI Plant Health Scanner</h1>', unsafe_allow_html=True)
     
-    # Real-time system info
-    col1, col2, col3, col4 = st.columns(4)
+    col1, col2 = st.columns([2, 1])
+    
+    with col1:
+        uploaded_file = st.file_uploader(
+            "📤 Upload Plant Leaf Image", 
+            type=["jpg", "png", "jpeg"], 
+            key="detect",
+            help="Supported formats: JPG, PNG, JPEG"
+        )
+        
+        if uploaded_file:
+            image = Image.open(uploaded_file)
+            st.image(image, caption="📸 Uploaded Leaf Sample", use_container_width=True)
+            
+            # Auto-analyze if enabled
+            if st.session_state.user_preferences['auto_analyze'] or st.button("🔍 Analyze Now", type="primary"):
+                with st.spinner("🔄 Analyzing image..."):
+                    progress_bar = st.progress(0)
+                    for i in range(100):
+                        time.sleep(0.01)
+                        progress_bar.progress(i + 1)
+                    
+                    results = analyze_image_advanced(image, "Voting Ensemble")
+                    
+                    # Display results with modern styling
+                    st.markdown(f"""
+                    <div class="prediction-box">
+                        <h2>🎯 Diagnosis Result</h2>
+                        <h1>{results['prediction']}</h1>
+                        <p>Confidence: {results['confidence']:.1f}%</p>
+                        <p>Analyzed by: {results['user']}</p>
+                    </div>
+                    """, unsafe_allow_html=True)
+                    
+                    # Confidence indicator
+                    if results['confidence'] > 80:
+                        st.markdown('<p class="confidence-high">🟢 High Confidence</p>', unsafe_allow_html=True)
+                    elif results['confidence'] > 60:
+                        st.markdown('<p class="confidence-medium">🟡 Medium Confidence</p>', unsafe_allow_html=True)
+                    else:
+                        st.markdown('<p class="confidence-low">🔴 Low Confidence</p>', unsafe_allow_html=True)
+                    
+                    # Update analytics
+                    update_analytics(results['prediction'], results['confidence'])
+                    
+                    # Add to history
+                    st.session_state.history.append({
+                        "Mode": "Detection",
+                        "Model": "Voting Ensemble",
+                        "Prediction": results['prediction'],
+                        "Confidence": f"{results['confidence']:.2f}%",
+                        "Timestamp": results['timestamp'].strftime("%Y-%m-%d %H:%M:%S"),
+                        "User": results['user']
+                    })
+                    
+                    # Show treatment recommendation
+                    disease_data = disease_info[results['prediction']]
+                    st.markdown(f"""
+                    <div class="feature-card">
+                        <h3>💊 Treatment Recommendation</h3>
+                        <p><strong>Severity:</strong> {disease_data['severity']}</p>
+                        <p><strong>Treatment:</strong> {disease_data['treatment']}</p>
+                        <p><strong>Prevention:</strong> {disease_data['prevention']}</p>
+                    </div>
+                    """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("### 📊 Live Analytics")
+        
+        # Real-time metrics
+        if st.session_state.analytics['total_predictions'] > 0:
+            # Pie chart of predictions
+            fig = px.pie(
+                values=[st.session_state.analytics['healthy_count'], 
+                       st.session_state.analytics['disease_count']], 
+                names=['Healthy', 'Diseased'],
+                title="Health Distribution",
+                color_discrete_map={'Healthy': '#4CAF50', 'Diseased': '#F44336'}
+            )
+            st.plotly_chart(fig, use_container_width=True)
+            
+            # Confidence trend
+            if len(st.session_state.analytics['accuracy_scores']) > 1:
+                fig2 = px.line(
+                    y=st.session_state.analytics['accuracy_scores'],
+                    title="Confidence Trend",
+                    labels={'y': 'Confidence %', 'x': 'Prediction #'}
+                )
+                st.plotly_chart(fig2, use_container_width=True)
+
+# --- Enhanced About Page ---
+def show_about():
+    """Enhanced about page with user-specific content"""
+    st.markdown('<h1 class="main-header">🌿 Plant Disease AI Assistant</h1>', unsafe_allow_html=True)
+    
+    # Welcome message
+    st.markdown(f"""
+    <div class="feature-card">
+        <h3>👋 Welcome back, {st.session_state.username}!</h3>
+        <p>Your account type: <strong>{st.session_state.user_role.title()}</strong></p>
+        <p>Current theme: <strong>{st.session_state.user_preferences['theme']}</strong></p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    col1, col2, col3 = st.columns(3)
     with col1:
         st.markdown("""
         <div class="metric-card">
-            <h4>🎯 Models Ready</h4>
-            <h2>{}</h2>
-            <p>Available for analysis</p>
+            <h3>🎯 Accuracy</h3>
+            <p>95%+ detection accuracy across all disease types</p>
         </div>
-        """.format(len(models) if models else 0), unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
     
     with col2:
         st.markdown("""
         <div class="metric-card">
-            <h4>⚡ Avg Speed</h4>
-            <h2>< 2s</h2>
-            <p>Analysis time</p>
+            <h3>⚡ Speed</h3>
+            <p>Real-time analysis in under 2 seconds</p>
         </div>
         """, unsafe_allow_html=True)
     
     with col3:
         st.markdown("""
         <div class="metric-card">
-            <h4>📊 Accuracy</h4>
-            <h2>95%+</h2>
-            <p>Detection precision</p>
+            <h3>🔬 Models</h3>
+            <p>6 different ML algorithms for robust predictions</p>
         </div>
         """, unsafe_allow_html=True)
     
-    with col4:
-        session_time = datetime.now() - st.session_state.session_info['start_time']
-        st.markdown(f"""
-        <div class="metric-card">
-            <h4>⏱️ Session Time</h4>
-            <h2>{str(session_time).split('.')[0]}</h2>
-            <p>Current session</p>
-        </div>
-        """, unsafe_allow_html=True)
+    # Rest of the about content...
+    st.markdown("---")
+    st.markdown("## 🚀 What's New")
     
-    col1, col2 = st.columns([2, 1])
+    features = [
+        "🔐 Secure user authentication system",
+        "🎨 Multiple theme options (Light, Dark, Colorful, Pastel)",
+        "👥 User management for administrators",
+        "📊 User-specific analytics and history",
+        "🔄 Real-time batch processing",
+        "📈 Advanced visualization charts",
+        "💾 Enhanced prediction history",
+        "🔔 Smart notifications system"
+    ]
     
-    with col1:
-        st.markdown("### 📤 Image Upload & Analysis")
-        uploaded_file = st.file_uploader(
-            "Upload Plant Leaf Image", 
-            type=["jpg", "png", "jpeg"], 
-            key="detect",
-            help="Supported formats: JPG, PNG, JPEG (Max size: 5MB)"
-        )
-        
-        if uploaded_file:
-            # Display image with enhanced info
-            image = Image.open(uploaded_file)
-            st.image(image, caption="📸 Uploaded Leaf Sample", use_container_width=True)
-            
-            # Image information
-            st.markdown(f"""
-            <div class="feature-card">
-                <h4>📋 Image Information</h4>
-                <p><strong>Filename:</strong> {uploaded_file.name}</p>
-                <p><strong>Size:</strong> {image.size}</p>
-                <p><strong>Format:</strong> {image.format}</p>
-                <p><strong>File Size:</strong> {uploaded_file.size / 1024:.1f} KB</p>
-            </div>
-            """, unsafe_allow_html=True)
-            
-            # Model selection for analysis
-            selected_model = st.selectbox(
-                "🤖 Select Analysis Model",
-                list(models.keys()) if models else ["Voting Ensemble"],
-                index=list(models.keys()).index(st.session_state.user_preferences['default_model']) if models else 0
-            )
-            
-            # Auto-analyze or manual trigger
-            should_analyze = st.session_state.user_preferences['auto_analyze']
-            if not should_analyze:
-                should_analyze = st.button("🔍 Analyze Now", type="primary")
-            
-            if should_analyze:
-                with st.spinner("🔄 Analyzing image..."):
-                    # Enhanced progress tracking
-                    progress_bar = st.progress(0)
-                    status_text = st.empty()
-                    
-                    # Simulate detailed analysis steps
-                    steps = [
-                        ("🖼️ Processing image...", 20),
-                        ("🔍 Extracting features...", 40),
-                        ("🧠 Running ML model...", 70),
-                        ("📊 Calculating confidence...", 90),
-                        ("✅ Finalizing results...", 100)
-                    ]
-                    
-                    for step, progress in steps:
-                        status_text.text(step)
-                        progress_bar.progress(progress)
-                        time.sleep(0.3)
-                    
-                    status_text.empty()
-                    
-                    # Perform analysis
-                    results = analyze_image_advanced(image, selected_model)
-                    
-                    # Display results with enhanced styling
-                    st.markdown(f"""
-                    <div class="prediction-box">
-                        <h2>🎯 Diagnosis Result</h2>
-                        <h1>{results['disease_details']['icon']} {results['prediction']}</h1>
-                        <p><strong>Confidence:</strong> {results['confidence']:.1f}%</p>
-                        <p><strong>Analysis Time:</strong> {results['analysis_time']:.3f} seconds</p>
-                        <p><strong>Model Used:</strong> {results['model_used']}</p>
-                        <p><strong>Analyzed by:</strong> {results['user']}</p>
-                    </div>
-                    """, unsafe_allow_html=True)
-                    
-                    # Enhanced confidence indicator
-                    if results['confidence'] > 85:
-                        st.markdown('<p class="confidence-high">🟢 High Confidence - Reliable diagnosis</p>', unsafe_allow_html=True)
-                    elif results['confidence'] > 70:
-                        st.markdown('<p class="confidence-medium">🟡 Medium Confidence - Good diagnosis</p>', unsafe_allow_html=True)
-                    elif results['confidence'] > 50:
-                        st.markdown('<p class="confidence-low">🟠 Low Confidence - Consider additional analysis</p>', unsafe_allow_html=True)
-                    else:
-                        st.markdown('<p class="confidence-low">🔴 Very Low Confidence - Requires expert review</p>', unsafe_allow_html=True)
-                    
-                    # Detailed analysis results
-                    if st.session_state.user_preferences['show_confidence_details']:
-                        st.markdown("### 📊 Detailed Analysis")
-                        
-                        # All probabilities
-                        prob_data = results['all_probabilities']
-                        prob_df = pd.DataFrame(list(prob_data.items()), columns=['Disease', 'Probability'])
-                        prob_df = prob_df.sort_values('Probability', ascending=False)
-                        
-                        fig_prob = px.bar(
-                            prob_df, 
-                            x='Disease', 
-                            y='Probability',
-                            title="Disease Probability Distribution",
-                            color='Probability',
-                            color_continuous_scale='RdYlGn_r'
-                        )
-                        st.plotly_chart(fig_prob, use_container_width=True)
-                    
-                    # Update analytics
-                    update_analytics(results['prediction'], results['confidence'], selected_model)
-                    
-                    # Add to history
-                    st.session_state.history.append({
-                        "Mode": "Detection",
-                        "Model": selected_model,
-                        "Prediction": results['prediction'],
-                        "Confidence": f"{results['confidence']:.2f}%",
-                        "Timestamp": results['timestamp'].strftime("%Y-%m-%d %H:%M:%S"),
-                        "User": results['user'],
-                        "Analysis_Time": f"{results['analysis_time']:.3f}s"
-                    })
-                    
-                    # Enhanced treatment recommendation
-                    disease_data = results['disease_details']
-                    st.markdown(f"""
-                    <div class="analysis-container">
-                        <h3>💊 Comprehensive Treatment Plan</h3>
-                        <div class="treatment-timeline">
-                            <h4>🚨 Severity Assessment</h4>
-                            <p><strong>Level:</strong> {disease_data['severity']} (Level {disease_data['severity_level']}/4)</p>
-                            <p><strong>Success Rate:</strong> {disease_data['success_rate']}%</p>
-                            <p><strong>Treatment Duration:</strong> {disease_data['duration']}</p>
-                            <p><strong>Estimated Cost:</strong> {disease_data['cost']}</p>
-                        </div>
-                        
-                        <h4>💊 Treatment Protocol</h4>
-                        <p>{disease_data['treatment']}</p>
-                        
-                        <h4>🛡️ Prevention Measures</h4>
-                        <p>{disease_data['prevention']}</p>
-                        
-                        <h4>🔍 Common Symptoms</h4>
-                        <ul>
-                            {"".join([f"<li>{symptom}</li>" for symptom in disease_data['symptoms']])}
-                        </ul>
-                        
-                        <h4>📋 Personalized Recommendations</h4>
-                        <ul>
-                            {"".join([f"<li>{rec}</li>" for rec in results['recommendations']])}
-                        </ul>
-                    </div>
-                    """, unsafe_allow_html=True)
-                    
-                    # Feature importance (if advanced metrics enabled)
-                    if st.session_state.user_preferences['show_advanced_metrics']:
-                        st.markdown("### 🔬 Feature Analysis")
-                        
-                        importance_data = results['feature_importance']
-                        # Get top 10 most important features
-                        top_features = sorted(importance_data.items(), key=lambda x: x[1], reverse=True)[:10]
-                        
-                        feature_df = pd.DataFrame(top_features, columns=['Feature', 'Importance'])
-                        
-                        fig_features = px.bar(
-                            feature_df,
-                            x='Importance',
-                            y='Feature',
-                            orientation='h',
-                            title="Top 10 Most Important Features",
-                            color='Importance',
-                            color_continuous_scale='viridis'
-                        )
-                        st.plotly_chart(fig_features, use_container_width=True)
-    
-    with col2:
-        st.markdown("### 📊 Real-time Analytics")
-        
-        # Live metrics
-        if st.session_state.analytics['total_predictions'] > 0:
-            # Disease distribution pie chart
-            disease_counts = {
-                'Healthy': st.session_state.analytics['healthy_count'],
-                'Diseased': st.session_state.analytics['disease_count']
-            }
-            
-            fig_pie = px.pie(
-                values=list(disease_counts.values()),
-                names=list(disease_counts.keys()),
-                title="Health Distribution",
-                color_discrete_map={'Healthy': '#4CAF50', 'Diseased': '#F44336'}
-            )
-            st.plotly_chart(fig_pie, use_container_width=True)
-            
-            # Confidence trend
-            if len(st.session_state.analytics['accuracy_scores']) > 1:
-                fig_trend = px.line(
-                    y=st.session_state.analytics['accuracy_scores'],
-                    title="Confidence Trend",
-                    labels={'y': 'Confidence %', 'x': 'Prediction #'}
-                )
-                fig_trend.update_layout(showlegend=False)
-                st.plotly_chart(fig_trend, use_container_width=True)
-            
-            # Model usage statistics
-            if st.session_state.analytics['model_usage']:
-                model_usage = st.session_state.analytics['model_usage']
-                fig_models = px.bar(
-                    x=list(model_usage.keys()),
-                    y=list(model_usage.values()),
-                    title="Model Usage Statistics"
-                )
-                st.plotly_chart(fig_models, use_container_width=True)
-        
-        # Live system monitoring
-        st.markdown("### 🖥️ System Monitor")
-        
-        # Session statistics
-        session_stats = {
-            "Predictions": st.session_state.session_info['predictions_this_session'],
-            "Models Used": len(st.session_state.session_info['models_used']),
-            "Uptime": str(datetime.now() - st.session_state.session_info['start_time']).split('.')[0]
-        }
-        
-        for metric, value in session_stats.items():
-            st.metric(metric, value)
-        
-        # Recent activity
-        if st.session_state.history:
-            st.markdown("### 📋 Recent Activity")
-            recent_activity = st.session_state.history[-5:]  # Last 5 predictions
-            for activity in reversed(recent_activity):
-                st.markdown(f"""
-                <div class="notification">
-                    <strong>{activity['Prediction']}</strong><br>
-                    {activity['Model']} - {activity['Confidence']}<br>
-                    <small>{activity['Timestamp']}</small>
-                </div>
-                """, unsafe_allow_html=True)
+    cols = st.columns(2)
+    for i, feature in enumerate(features):
+        with cols[i % 2]:
+            st.markdown(f"✅ {feature}")
 
-# Continue with the rest of the enhanced functions...
-# [The rest of the functions follow the same pattern with enhanced features]
+# --- Enhanced Navigation ---
+def setup_navigation():
+    """Setup navigation with role-based access"""
+    st.sidebar.title("🧭 Navigation Hub")
+    
+    # Base activities for all users
+    activities = {
+        "🏠 Home": "About Project",
+        "🔬 AI Scanner": "Plant Disease", 
+        "📊 Analytics": "Analytics",
+        "⚙️ Settings": "Settings"
+    }
+    
+    # Add admin-only features
+    if st.session_state.user_role == 'admin':
+        activities["👥 User Management"] = "User Management"
+    
+    activity = st.sidebar.selectbox("📍 Main Section", list(activities.keys()))
+    
+    if activity == "🔬 AI Scanner":
+        tasks = {
+            "🩺 Quick Detection": "Detection",
+            "🧠 Advanced Classification": "Classification", 
+            "💊 Treatment Guide": "Treatment"
+        }
+        task = st.sidebar.selectbox("🎯 AI Tools", list(tasks.keys()))
+        return activities[activity], tasks[task]
+    
+    return activities[activity], None
 
 # --- Main Application ---
 def main():
-    """Main application with enhanced features"""
+    """Main application with authentication"""
     # Initialize session state and users
     init_session_state()
     init_users()
@@ -2863,22 +713,23 @@ def main():
     models = load_models()
     
     # Setup sidebar and navigation
-    activity, task = setup_sidebar()
+    setup_sidebar()
     
     # Check if models are loaded
     if models is None:
         st.error("❌ Cannot load ML models. Please check your model files.")
         return
     
-    # Enhanced routing with all features
+    # Navigation
+    activity, task = setup_navigation()
+    
+    # Route to appropriate page
     if activity == "About Project":
         show_about()
     elif activity == "User Management":
         show_user_management()
-    elif activity == "System Status":
-        show_system_status()
     elif activity == "Analytics":
-        show_analytics()
+        show_history()
     elif activity == "Settings":
         show_settings()
     elif task == "Detection":
@@ -2887,168 +738,473 @@ def main():
         show_classification()
     elif task == "Treatment":
         show_treatment()
-    elif task == "Batch Analysis":
-        show_batch_analysis()
 
-# Add the missing functions with enhanced features
-def show_about():
-    """Enhanced about page with comprehensive information"""
-    st.markdown('<h1 class="main-header">🌿 Plant Disease AI Assistant</h1>', unsafe_allow_html=True)
+# --- Advanced Classification Page ---
+def show_classification():
+    """Advanced classification with multiple models comparison"""
+    st.markdown('<h1 class="main-header">🧠 Advanced Classification</h1>', unsafe_allow_html=True)
     
-    # Welcome section with user info
-    st.markdown(f"""
-    <div class="analysis-container">
-        <h3>👋 Welcome back, {st.session_state.username}!</h3>
-        <p><strong>Account Type:</strong> {st.session_state.user_role.title()}</p>
-        <p><strong>Current Theme:</strong> {st.session_state.user_preferences['theme']}</p>
-        <p><strong>Total Predictions:</strong> {st.session_state.users[st.session_state.username]['total_predictions']}</p>
-        <p><strong>Last Login:</strong> {st.session_state.users[st.session_state.username]['last_login'][:19]}</p>
-    </div>
-    """, unsafe_allow_html=True)
+    # Model selection
+    col1, col2 = st.columns([3, 1])
     
-    # Enhanced feature showcase
-    st.markdown("## 🚀 Advanced Features")
+    with col2:
+        selected_models = st.multiselect(
+            "🤖 Select Models",
+            list(models.keys()),
+            default=["Random Forest", "SVM (RBF Kernel)", "Voting Ensemble"]
+        )
+        
+        batch_mode = st.checkbox("📁 Batch Processing Mode")
+        
+        if st.session_state.user_preferences['show_advanced_metrics']:
+            show_feature_analysis = st.checkbox("🔍 Show Feature Analysis", True)
+        else:
+            show_feature_analysis = False
     
-    feature_cols = st.columns(3)
+    with col1:
+        if batch_mode:
+            uploaded_files = st.file_uploader(
+                "📤 Upload Multiple Plant Images", 
+                type=["jpg", "png", "jpeg"], 
+                accept_multiple_files=True,
+                key="batch_classify"
+            )
+            
+            if uploaded_files:
+                st.write(f"📊 Processing {len(uploaded_files)} images...")
+                
+                results_data = []
+                progress_bar = st.progress(0)
+                
+                for i, uploaded_file in enumerate(uploaded_files):
+                    image = Image.open(uploaded_file)
+                    
+                    # Analyze with selected models
+                    for model_name in selected_models:
+                        result = analyze_image_advanced(image, model_name)
+                        results_data.append({
+                            "Image": uploaded_file.name,
+                            "Model": model_name,
+                            "Prediction": result['prediction'],
+                            "Confidence": f"{result['confidence']:.2f}%",
+                            "User": result['user']
+                        })
+                    
+                    progress_bar.progress((i + 1) / len(uploaded_files))
+                
+                # Display results table
+                results_df = pd.DataFrame(results_data)
+                st.dataframe(results_df, use_container_width=True)
+                
+                # Model comparison chart
+                if len(selected_models) > 1:
+                    fig = px.bar(
+                        results_df.groupby(['Model', 'Prediction']).size().reset_index(name='Count'),
+                        x='Model', y='Count', color='Prediction',
+                        title="Model Predictions Comparison"
+                    )
+                    st.plotly_chart(fig, use_container_width=True)
+        
+        else:
+            uploaded_file = st.file_uploader(
+                "📤 Upload Plant Leaf Image", 
+                type=["jpg", "png", "jpeg"], 
+                key="classify"
+            )
+            
+            if uploaded_file:
+                image = Image.open(uploaded_file)
+                st.image(image, caption="📸 Uploaded Image", use_container_width=True)
+                
+                if st.button("🔍 Analyze with Selected Models", type="primary"):
+                    results = {}
+                    
+                    with st.spinner("🔄 Running classification..."):
+                        for model_name in selected_models:
+                            results[model_name] = analyze_image_advanced(image, model_name)
+                    
+                    # Display results comparison
+                    st.markdown("### 📊 Model Comparison Results")
+                    
+                    cols = st.columns(len(selected_models))
+                    for i, (model_name, result) in enumerate(results.items()):
+                        with cols[i]:
+                            st.markdown(f"""
+                            <div class="feature-card">
+                                <h4>{model_name}</h4>
+                                <h3>{result['prediction']}</h3>
+                                <p>Confidence: {result['confidence']:.1f}%</p>
+                            </div>
+                            """, unsafe_allow_html=True)
+                    
+                    # Feature analysis
+                    if show_feature_analysis:
+                        st.markdown("### 🔍 Feature Analysis")
+                        
+                        # Extract and display features
+                        features = extract_features(image)
+                        feature_names = ['Mean_R', 'Mean_G', 'Mean_B', 'Std_R', 'Std_G', 'Std_B'] + [f'LBP_{i}' for i in range(10)]
+                        
+                        feature_df = pd.DataFrame({
+                            'Feature': feature_names,
+                            'Value': features
+                        })
+                        
+                        fig = px.bar(feature_df, x='Feature', y='Value', title="Extracted Features")
+                        st.plotly_chart(fig, use_container_width=True)
+                    
+                    # Update history for all models
+                    for model_name, result in results.items():
+                        st.session_state.history.append({
+                            "Mode": "Classification",
+                            "Model": model_name,
+                            "Prediction": result['prediction'],
+                            "Confidence": f"{result['confidence']:.2f}%",
+                            "Timestamp": result['timestamp'].strftime("%Y-%m-%d %H:%M:%S"),
+                            "User": result['user']
+                        })
+                        
+                        update_analytics(result['prediction'], result['confidence'])
+
+# --- Treatment Guide Page ---
+def show_treatment():
+    """Treatment and prevention guide"""
+    st.markdown('<h1 class="main-header">💊 Treatment & Prevention Guide</h1>', unsafe_allow_html=True)
     
-    with feature_cols[0]:
-        st.markdown("""
+    # Disease selection
+    selected_disease = st.selectbox(
+        "🔍 Select Disease Type",
+        list(disease_info.keys()),
+        help="Choose a disease to view detailed treatment information"
+    )
+    
+    disease_data = disease_info[selected_disease]
+    
+    # Display disease information
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown(f"""
         <div class="feature-card">
-            <h3>🎯 AI-Powered Detection</h3>
-            <ul>
-                <li>6 ML models for accuracy</li>
-                <li>95%+ detection precision</li>
-                <li>Real-time analysis</li>
-                <li>Feature importance analysis</li>
-            </ul>
+            <h2 style="color: {disease_data['color']};">{selected_disease}</h2>
+            <h3>🚨 Severity Level</h3>
+            <p style="font-size: 1.2em; font-weight: bold;">{disease_data['severity']}</p>
+            
+            <h3>💊 Treatment</h3>
+            <p>{disease_data['treatment']}</p>
+            
+            <h3>🛡️ Prevention</h3>
+            <p>{disease_data['prevention']}</p>
         </div>
         """, unsafe_allow_html=True)
     
-    with feature_cols[1]:
-        st.markdown("""
-        <div class="feature-card">
-            <h3>📊 Advanced Analytics</h3>
-            <ul>
-                <li>Real-time monitoring</li>
-                <li>Historical trend analysis</li>
-                <li>Model performance metrics</li>
-                <li>User activity tracking</li>
-            </ul>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with feature_cols[2]:
-        st.markdown("""
-        <div class="feature-card">
-            <h3>🔐 Enterprise Security</h3>
-            <ul>
-                <li>Multi-user authentication</li>
-                <li>Role-based access control</li>
-                <li>Session management</li>
-                <li>Data encryption</li>
-            </ul>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    # System capabilities
-    st.markdown("## 🔬 Technical Capabilities")
-    
-    caps_cols = st.columns(2)
-    
-    with caps_cols[0]:
-        st.markdown("""
-        <div class="analysis-container">
-            <h4>🖼️ Image Processing</h4>
-            <ul>
-                <li>Multi-format support (JPG, PNG, JPEG)</li>
-                <li>Automatic image preprocessing</li>
-                <li>Color space analysis (RGB, HSV, LAB)</li>
-                <li>Texture feature extraction</li>
-                <li>Edge detection algorithms</li>
-            </ul>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with caps_cols[1]:
-        st.markdown("""
-        <div class="analysis-container">
-            <h4>🤖 Machine Learning</h4>
-            <ul>
-                <li>Random Forest Classifier</li>
-                <li>Support Vector Machine</li>
-                <li>Gradient Boosting</li>
-                <li>K-Nearest Neighbors</li>
-                <li>Logistic Regression</li>
-                <li>Voting Ensemble</li>
-            </ul>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    # Disease coverage
-    st.markdown("## 🦠 Disease Coverage")
-    
-    disease_cols = st.columns(len(disease_info))
-    
-    for i, (disease, info) in enumerate(disease_info.items()):
-        with disease_cols[i]:
-            st.markdown(f"""
-            <div class="feature-card">
-                <h4 style="color: {info['color']};">{info['icon']} {disease}</h4>
-                <p><strong>Severity:</strong> {info['severity']}</p>
-                <p><strong>Success Rate:</strong> {info['success_rate']}%</p>
-                <p><strong>Duration:</strong> {info['duration']}</p>
-            </div>
-            """, unsafe_allow_html=True)
-    
-    # Performance metrics
-    st.markdown("## 📈 Performance Metrics")
-    
-    if st.session_state.analytics['total_predictions'] > 0:
-        metrics_cols = st.columns(4)
+    with col2:
+        st.markdown("### 📈 Treatment Timeline")
         
-        with metrics_cols[0]:
-            st.metric("Total Predictions", st.session_state.analytics['total_predictions'])
+        # Treatment timeline based on disease type
+        if selected_disease == "Healthy":
+            timeline_data = {
+                "Week": [1, 2, 3, 4],
+                "Action": ["Monitor", "Regular Care", "Maintain", "Continue"],
+                "Status": ["Good", "Good", "Good", "Good"]
+            }
+        elif selected_disease == "Rust":
+            timeline_data = {
+                "Week": [1, 2, 3, 4],
+                "Action": ["Apply Fungicide", "Monitor Progress", "Repeat Treatment", "Evaluate"],
+                "Status": ["Critical", "Improving", "Better", "Recovered"]
+            }
+        elif selected_disease == "Scab":
+            timeline_data = {
+                "Week": [1, 2, 3, 4],
+                "Action": ["Sulfur Treatment", "Improve Drainage", "Monitor", "Maintain"],
+                "Status": ["Critical", "Improving", "Better", "Stable"]
+            }
+        else:  # Multiple Diseases
+            timeline_data = {
+                "Week": [1, 2, 3, 4],
+                "Action": ["Consult Expert", "Intensive Care", "Monitor", "Evaluate"],
+                "Status": ["Critical", "Critical", "Improving", "Uncertain"]
+            }
         
-        with metrics_cols[1]:
-            avg_confidence = np.mean(st.session_state.analytics['accuracy_scores'])
-            st.metric("Average Confidence", f"{avg_confidence:.1f}%")
+        timeline_df = pd.DataFrame(timeline_data)
+        st.dataframe(timeline_df, use_container_width=True)
         
-        with metrics_cols[2]:
-            healthy_ratio = (st.session_state.analytics['healthy_count'] / 
-                           st.session_state.analytics['total_predictions']) * 100
-            st.metric("Healthy Plants", f"{healthy_ratio:.1f}%")
+        # Treatment effectiveness chart
+        effectiveness_data = {
+            "Healthy": 100,
+            "Rust": 85,
+            "Scab": 80,
+            "Multiple Diseases": 60
+        }
         
-        with metrics_cols[3]:
-            most_used_model = max(st.session_state.analytics['model_usage'].items(), 
-                                key=lambda x: x[1])[0] if st.session_state.analytics['model_usage'] else "N/A"
-            st.metric("Most Used Model", most_used_model)
+        fig = px.bar(
+            x=list(effectiveness_data.keys()),
+            y=list(effectiveness_data.values()),
+            title="Treatment Effectiveness Rate (%)",
+            color=list(effectiveness_data.values()),
+            color_continuous_scale="RdYlGn"
+        )
+        st.plotly_chart(fig, use_container_width=True)
     
-    # Technology stack
+    # Additional resources
     st.markdown("---")
-    st.markdown("## 🛠️ Technology Stack")
+    st.markdown("### 📚 Additional Resources")
     
-    tech_info = {
-        "Frontend": ["Streamlit", "Plotly", "HTML/CSS"],
-        "Backend": ["Python", "NumPy", "Pandas"],
-        "ML/AI": ["Scikit-learn", "OpenCV", "PIL"],
-        "Data": ["Joblib", "JSON", "CSV"]
-    }
+    resources = [
+        "🌱 Plant Care Best Practices",
+        "🔬 Disease Identification Guide",
+        "💧 Watering Guidelines",
+        "🌞 Light Requirements",
+        "🌡️ Temperature Control",
+        "🌿 Organic Treatment Options"
+    ]
     
-    tech_cols = st.columns(len(tech_info))
-    
-    for i, (category, technologies) in enumerate(tech_info.items()):
-        with tech_cols[i]:
-            st.markdown(f"""
-            <div class="feature-card">
-                <h4>{category}</h4>
-                <ul>
-                    {"".join([f"<li>{tech}</li>" for tech in technologies])}
-                </ul>
-            </div>
-            """, unsafe_allow_html=True)
+    cols = st.columns(3)
+    for i, resource in enumerate(resources):
+        with cols[i % 3]:
+            st.markdown(f"📖 {resource}")
 
-# Additional enhanced functions would follow the same pattern...
-# [Include all the other enhanced functions like show_classification, show_treatment, etc.]
+# --- Analytics/History Page ---
+def show_history():
+    """Show prediction history and analytics"""
+    st.markdown('<h1 class="main-header">📊 Analytics & History</h1>', unsafe_allow_html=True)
+    
+    if not st.session_state.history:
+        st.info("🔍 No predictions yet. Start by uploading and analyzing plant images!")
+        return
+    
+    # Summary metrics
+    col1, col2, col3, col4 = st.columns(4)
+    
+    with col1:
+        st.markdown("""
+        <div class="metric-card">
+            <h3>📈 Total Predictions</h3>
+            <h2>{}</h2>
+        </div>
+        """.format(len(st.session_state.history)), unsafe_allow_html=True)
+    
+    with col2:
+        healthy_count = sum(1 for h in st.session_state.history if h['Prediction'] == 'Healthy')
+        st.markdown("""
+        <div class="metric-card">
+            <h3>🌱 Healthy Plants</h3>
+            <h2>{}</h2>
+        </div>
+        """.format(healthy_count), unsafe_allow_html=True)
+    
+    with col3:
+        disease_count = len(st.session_state.history) - healthy_count
+        st.markdown("""
+        <div class="metric-card">
+            <h3>🚨 Diseased Plants</h3>
+            <h2>{}</h2>
+        </div>
+        """.format(disease_count), unsafe_allow_html=True)
+    
+    with col4:
+        avg_confidence = np.mean([float(h['Confidence'].replace('%', '')) for h in st.session_state.history])
+        st.markdown("""
+        <div class="metric-card">
+            <h3>🎯 Avg Confidence</h3>
+            <h2>{:.1f}%</h2>
+        </div>
+        """.format(avg_confidence), unsafe_allow_html=True)
+    
+    # History table
+    st.markdown("### 📋 Prediction History")
+    history_df = pd.DataFrame(st.session_state.history)
+    st.dataframe(history_df, use_container_width=True)
+    
+    # Analytics charts
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        # Prediction distribution
+        prediction_counts = history_df['Prediction'].value_counts()
+        fig1 = px.pie(
+            values=prediction_counts.values,
+            names=prediction_counts.index,
+            title="Prediction Distribution"
+        )
+        st.plotly_chart(fig1, use_container_width=True)
+    
+    with col2:
+        # Model usage
+        model_counts = history_df['Model'].value_counts()
+        fig2 = px.bar(
+            x=model_counts.index,
+            y=model_counts.values,
+            title="Model Usage Statistics"
+        )
+        st.plotly_chart(fig2, use_container_width=True)
+    
+    # Time series analysis
+    if len(st.session_state.history) > 1:
+        st.markdown("### 📈 Time Series Analysis")
+        
+        # Convert timestamp to datetime
+        history_df['Timestamp'] = pd.to_datetime(history_df['Timestamp'])
+        history_df['Confidence_Numeric'] = history_df['Confidence'].str.replace('%', '').astype(float)
+        
+        fig3 = px.line(
+            history_df,
+            x='Timestamp',
+            y='Confidence_Numeric',
+            color='Model',
+            title="Confidence Over Time"
+        )
+        st.plotly_chart(fig3, use_container_width=True)
+    
+    # Export functionality
+    st.markdown("### 📥 Export Data")
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        if st.button("📊 Export to CSV"):
+            csv = history_df.to_csv(index=False)
+            b64 = base64.b64encode(csv.encode()).decode()
+            href = f'<a href="data:file/csv;base64,{b64}" download="prediction_history.csv">Download CSV</a>'
+            st.markdown(href, unsafe_allow_html=True)
+    
+    with col2:
+        if st.button("📋 Export to JSON"):
+            json_data = history_df.to_json(orient='records')
+            b64 = base64.b64encode(json_data.encode()).decode()
+            href = f'<a href="data:file/json;base64,{b64}" download="prediction_history.json">Download JSON</a>'
+            st.markdown(href, unsafe_allow_html=True)
 
+# --- Settings Page ---
+def show_settings():
+    """User settings and preferences"""
+    st.markdown('<h1 class="main-header">⚙️ Settings & Preferences</h1>', unsafe_allow_html=True)
+    
+    # User profile section
+    st.markdown("### 👤 User Profile")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown(f"""
+        <div class="feature-card">
+            <h4>Current User Information</h4>
+            <p><strong>Username:</strong> {st.session_state.username}</p>
+            <p><strong>Role:</strong> {st.session_state.user_role.title()}</p>
+            <p><strong>Total Predictions:</strong> {len(st.session_state.history)}</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("#### 🔐 Change Password")
+        old_password = st.text_input("Current Password", type="password", key="old_pass")
+        new_password = st.text_input("New Password", type="password", key="new_pass")
+        confirm_password = st.text_input("Confirm New Password", type="password", key="confirm_pass")
+        
+        if st.button("🔄 Update Password"):
+            if authenticate_user(st.session_state.username, old_password):
+                if new_password == confirm_password and len(new_password) >= 6:
+                    st.session_state.users[st.session_state.username]['password'] = hash_password(new_password)
+                    st.success("✅ Password updated successfully!")
+                else:
+                    st.error("❌ New passwords don't match or are too short")
+            else:
+                st.error("❌ Current password is incorrect")
+    
+    # Application preferences
+    st.markdown("---")
+    st.markdown("### 🎛️ Application Preferences")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("#### 🎨 Display Settings")
+        
+        # Theme selection
+        theme_options = ["🌞 Light", "🌙 Dark", "🌈 Colorful", "🌸 Pastel"]
+        selected_theme = st.selectbox(
+            "Theme", 
+            theme_options,
+            index=theme_options.index(st.session_state.user_preferences['theme'])
+        )
+        
+        # Auto-analyze setting
+        auto_analyze = st.checkbox(
+            "Auto-analyze uploaded images", 
+            st.session_state.user_preferences['auto_analyze']
+        )
+        
+        # Advanced metrics
+        show_advanced_metrics = st.checkbox(
+            "Show advanced metrics", 
+            st.session_state.user_preferences['show_advanced_metrics']
+        )
+    
+    with col2:
+        st.markdown("#### 🔔 Notification Settings")
+        
+        notification_enabled = st.checkbox(
+            "Enable notifications", 
+            st.session_state.user_preferences['notification_enabled']
+        )
+        
+        st.markdown("#### 📊 Data Settings")
+        
+        if st.button("🗑️ Clear History"):
+            st.session_state.history = []
+            st.session_state.analytics = {
+                'total_predictions': 0,
+                'healthy_count': 0,
+                'disease_count': 0,
+                'accuracy_scores': []
+            }
+            st.success("✅ History cleared successfully!")
+            st.rerun()
+    
+    # Save preferences
+    if st.button("💾 Save Preferences", type="primary"):
+        st.session_state.user_preferences.update({
+            'theme': selected_theme,
+            'auto_analyze': auto_analyze,
+            'show_advanced_metrics': show_advanced_metrics,
+            'notification_enabled': notification_enabled
+        })
+        st.success("✅ Preferences saved successfully!")
+        st.rerun()
+    
+    # System information (for admins)
+    if st.session_state.user_role == 'admin':
+        st.markdown("---")
+        st.markdown("### 🔧 System Information")
+        
+        system_info = {
+            "Total Users": len(st.session_state.users),
+            "Total Predictions": len(st.session_state.history),
+            "Models Loaded": len(models),
+            "Session State Keys": len(st.session_state.keys())
+        }
+        
+        for key, value in system_info.items():
+            st.metric(key, value)
+# Enhanced footer
+    st.markdown("---")
+    st.markdown("""
+    <div style='text-align: center; padding: 2rem; 
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                color: white; border-radius: 15px; margin-top: 2rem;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.1);'>
+        <h3>🌿 Plant Disease AI Assistant </h3>
+        <p>🚀 Made with ❤️ by Kratik Jain</p>
+        <p>⚡ Powered by Streamlit • OpenCV • Scikit-learn • Plotly </p>
+        <div style='margin-top: 1rem; font-size: 0.9rem; opacity: 0.8;'>
+            📊 Total Predictions: {total} | 🌱 Healthy: {healthy} | 🦠 Diseased: {diseased}
+        </div>
+    </div>
+    """.format(
+        total=st.session_state.analytics['total_predictions'],
+        healthy=st.session_state.analytics['healthy_count'],
+        diseased=st.session_state.analytics['disease_count']
+    ), unsafe_allow_html=True)
+# Run the application
 if __name__ == "__main__":
     main()
