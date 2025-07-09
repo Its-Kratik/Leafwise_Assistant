@@ -22,8 +22,8 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded",
     menu_items={
-        'Get Help': 'https://github.com/Its-Kratik/plant-disease-app',
-        'Report a bug': 'https://github.com/Its-Kratik/plant-disease-app/issues',
+        'Get Help': 'https://github.com/Its-Kratik/Plant_disease_ai_assistant',
+        'Report a bug': 'https://github.com/Its-Kratik/Plant_disease_ai_assistant/issues',
         'About': "# Plant Disease AI Assistant\nAdvanced ML-powered plant health diagnosis"
     }
 )
