@@ -417,9 +417,10 @@ def setup_sidebar():
     )
     st.session_state.user_preferences['theme'] = theme
     # Update theme if changed
-    if selected_theme != st.session_state.user_preferences['theme']:
-        st.session_state.user_preferences['theme'] = selected_theme
+    if theme != st.session_state.user_preferences['theme']:
+        st.session_state.user_preferences['theme'] = theme
         st.rerun()
+
     
     # Advanced settings
     st.sidebar.markdown("### ⚙️ Advanced Settings")
