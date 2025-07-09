@@ -141,7 +141,6 @@ disease_info = {
 }
 
 # --- Enhanced Feature Extraction ---
-@st.cache_data
 def extract_features(pil_img):
     img = np.array(pil_img.resize((128, 128)))
     img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
