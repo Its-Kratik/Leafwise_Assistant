@@ -826,6 +826,21 @@ def show_classification():
         
         show_feature_analysis = st.checkbox("🔬 Show Feature Analysis", 
                                            st.session_state.user_preferences['show_advanced_metrics'])
+        # Initialize missing user preferences
+if 'user_preferences' not in st.session_state:
+    st.session_state.user_preferences = {}
+
+# Set default values for missing keys
+default_preferences = {
+    'show_feature_analysis': False,
+    'show_confidence_details': False,
+    'enable_notifications': False
+}
+
+for key, default_value in default_preferences.items():
+    if key not in st.session_state.user_preferences:
+        st.session_state.user_preferences[key] = default_value
+
         show_confidence_details = st.checkbox("📊 Show Confidence Details", 
                                              st.session_state.user_preferences['show_confidence_details'])
         enable_notifications = st.checkbox("🔔 Enable Analysis Notifications", 
