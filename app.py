@@ -2458,7 +2458,6 @@ def setup_sidebar():
     activity = st.sidebar.selectbox("📍 Main Section", list(activities.keys()))
     
     # AI Scanner sub-navigation
-    task = None
     if activity == "🔬 AI Scanner":
         tasks = {
             "🩺 Quick Detection": "Detection",
