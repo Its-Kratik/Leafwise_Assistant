@@ -22,8 +22,8 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded",
     menu_items={
-        'Get Help': 'https://github.com/Its-Kratik/Plant_disease_ai_assistant',
-        'Report a bug': 'https://github.com/Its-Kratik/Plant_disease_ai_assistant/issues',
+        'Get Help': 'https://github.com/Its-Kratik/Leafwise_Assistant',
+        'Report a bug': 'https://github.com/Its-Kratik/Leafwise_Assistant/issues',
         'About': "# Plant Disease AI Assistant\nAdvanced ML-powered plant health diagnosis"
     }
 )
@@ -967,389 +967,203 @@ def show_classification():
         • Try multiple models for comparison
         • Use batch mode for multiple images
         """)
-# --- Treatment Guide Page ---
-def show_treatment():
- 
-    st.markdown('<h1 class="main-header">💊 Treatment & Prevention Guide</h1>', unsafe_allow_html=True)
-    
-    # Header statistics
-    col1, col2, col3, col4 = st.columns(4)
-    with col1:
-        st.markdown("""
-        <div class="metric-card">
-            <h4>🦠 Diseases Covered</h4>
-            <h2>{}</h2>
-            <p>Comprehensive database</p>
-        </div>
-        """.format(len(disease_info)), unsafe_allow_html=True)
-    
-    with col2:
-        rates = [info.get('success_rate') for info in disease_info if info.get('success_rate') is not None]
-        avg_success_rate = np.mean(rates) if rates else 0
 
-        st.markdown(f"""
-        <div class="metric-card">
-            <h4>📈 Avg Success Rate</h4>
-            <h2>{avg_success_rate:.1f}%</h2>
-            <p>Treatment effectiveness</p>
-        </div>
-        """, unsafe_allow_html=True)
+# --- Enhanced Treatment Guide ---
+def show_treatment():
+    st.markdown('<h1 class="main-header">🌾 Smart Treatment Guide</h1>', unsafe_allow_html=True)
     
-    with col3:
-        st.markdown("""
-        <div class="metric-card">
-            <h4>⏱️ Avg Duration</h4>
-            <h2>2-4</h2>
-            <p>Weeks to recovery</p>
-        </div>
-        """, unsafe_allow_html=True)
+    # Define disease_info structure (add this if it's not defined elsewhere)
+    disease_info = {
+        "Healthy": {
+            "color": "#4CAF50",
+            "severity": "None",
+            "treatment": "Continue regular care routine",
+            "prevention": "Maintain optimal growing conditions"
+        },
+        "Rust": {
+            "color": "#FF9800",
+            "severity": "Medium",
+            "treatment": "Apply sulfur-based fungicide weekly",
+            "prevention": "Ensure good air circulation, avoid overhead watering"
+        },
+        "Scab": {
+            "color": "#F44336",
+            "severity": "High",
+            "treatment": "Apply Mancozeb fungicide, prune affected areas",
+            "prevention": "Remove fallen leaves, improve drainage"
+        },
+        "Multiple": {
+            "color": "#9C27B0",
+            "severity": "Critical",
+            "treatment": "Consult plant pathologist, apply targeted treatments",
+            "prevention": "Implement comprehensive disease management program"
+        }
+    }
     
-    with col4:
-        st.markdown("""
-        <div class="metric-card">
-            <h4>🎯 Prevention Tips</h4>
-            <h2>15+</h2>
-            <p>Expert recommendations</p>
-        </div>
-        """, unsafe_allow_html=True)
+    # Interactive disease selector
+    selected_disease = st.selectbox(
+        "🔍 Select Disease Type",
+        list(disease_info.keys()),
+        format_func=lambda x: f"{x} ({'✅ Healthy' if x == 'Healthy' else '🦠 Disease'})"
+    )
     
-    # Main interface
-    col1, col2 = st.columns([2, 1])
+    disease_data = disease_info[selected_disease]
+    
+    # Disease-specific treatment card
+    st.markdown(f"""
+    <div style="background: linear-gradient(135deg, {disease_data['color']}22, {disease_data['color']}11); 
+                padding: 2rem; border-radius: 15px; border-left: 5px solid {disease_data['color']};">
+        <h2>{selected_disease}</h2>
+        <p><strong>🚨 Severity Level:</strong> {disease_data['severity']}</p>
+        <p><strong>💊 Treatment:</strong> {disease_data['treatment']}</p>
+        <p><strong>🛡️ Prevention:</strong> {disease_data['prevention']}</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("---")
+    
+    # Enhanced treatment information
+    col1, col2 = st.columns(2)
     
     with col1:
-        # Disease selection with enhanced interface
-        st.markdown("### 🔍 Disease Selection & Overview")
+        st.markdown("### 🍏 Apple & Pear Scab")
+        st.markdown("""
+        **Symptoms:**
+        - Olive-green or black spots on leaves
+        - Scaly lesions on fruits
+        - Premature leaf drop
         
-        # Create disease cards for selection
-        selected_disease = st.selectbox(
-            "Select Disease Type",
-            list(disease_info.keys()),
-            help="Choose a disease to view comprehensive treatment information"
-        )
+        **Treatment Steps:**
+        1. 🧴 Apply Mancozeb fungicide
+        2. ✂️ Prune affected areas
+        3. 🍂 Remove fallen leaves
+        4. 💧 Improve air circulation
+        """)
         
-        disease_data = disease_info[selected_disease]
-        
-        # Enhanced disease overview
-        st.markdown(f"""
-        <div class="analysis-container">
-            <div style="text-align: center; padding: 2rem;">
-                <h1 style="font-size: 3rem;">{disease_data['icon']}</h1>
-                <h2 style="color: {disease_data['color']}; margin: 1rem 0;">{selected_disease}</h2>
-                <div class="stats-grid">
-                    <div style="background: {disease_data['color']}; color: white; padding: 1rem; border-radius: 8px;">
-                        <h4>🚨 Severity</h4>
-                        <p>{disease_data['severity']} (Level {disease_data['severity_level']}/4)</p>
-                    </div>
-                    <div style="background: linear-gradient(135deg, #4CAF50, #2196F3); color: white; padding: 1rem; border-radius: 8px;">
-                        <h4>📈 Success Rate</h4>
-                        <p>{disease_data['success_rate']}%</p>
-                    </div>
-                    <div style="background: linear-gradient(135deg, #FF9800, #F44336); color: white; padding: 1rem; border-radius: 8px;">
-                        <h4>⏱️ Duration</h4>
-                        <p>{disease_data['duration']}</p>
-                    </div>
-                    <div style="background: linear-gradient(135deg, #9C27B0, #673AB7); color: white; padding: 1rem; border-radius: 8px;">
-                        <h4>💰 Cost</h4>
-                        <p>{disease_data['cost']}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        # Detailed treatment protocol
-        st.markdown("### 💊 Comprehensive Treatment Protocol")
-        
-        # Treatment phases
-        treatment_phases = {
-            "Healthy": [
-                {"phase": "Maintenance", "duration": "Ongoing", "actions": ["Regular monitoring", "Optimal care conditions", "Preventive measures"]},
-            ],
-            "Rust": [
-                {"phase": "Immediate (Days 1-3)", "duration": "3 days", "actions": ["Isolate affected plant", "Apply copper fungicide", "Remove infected leaves"]},
-                {"phase": "Treatment (Days 4-14)", "duration": "10 days", "actions": ["Continue fungicide treatment", "Improve air circulation", "Monitor progress"]},
-                {"phase": "Recovery (Days 15-21)", "duration": "7 days", "actions": ["Reduce treatment frequency", "Assess recovery", "Maintain conditions"]},
-            ],
-            "Scab": [
-                {"phase": "Immediate (Days 1-3)", "duration": "3 days", "actions": ["Apply sulfur-based fungicide", "Improve drainage", "Remove affected parts"]},
-                {"phase": "Treatment (Days 4-21)", "duration": "18 days", "actions": ["Weekly fungicide application", "Monitor soil moisture", "Avoid overhead watering"]},
-                {"phase": "Recovery (Days 22-28)", "duration": "7 days", "actions": ["Evaluate treatment success", "Gradual return to normal care", "Long-term monitoring"]},
-            ],
-            "Multiple Diseases": [
-                {"phase": "Emergency (Days 1-5)", "duration": "5 days", "actions": ["Consult plant specialist", "Complete isolation", "Document all symptoms"]},
-                {"phase": "Intensive Care (Days 6-28)", "duration": "23 days", "actions": ["Follow specialist recommendations", "Multiple treatment approaches", "Daily monitoring"]},
-                {"phase": "Recovery Assessment (Days 29-42)", "duration": "14 days", "actions": ["Evaluate treatment effectiveness", "Adjust protocols", "Plan long-term care"]},
-            ]
-        }
-        
-        phases = treatment_phases.get(selected_disease, treatment_phases["Healthy"])
-        
-        for i, phase in enumerate(phases):
-            st.markdown(f"""
-            <div class="treatment-timeline">
-                <h4 style="color: {disease_data['color']};">📅 Phase {i+1}: {phase['phase']}</h4>
-                <p><strong>Duration:</strong> {phase['duration']}</p>
-                <h5>🔧 Actions to Take:</h5>
-                <ul>
-                    {"".join([f"<li>{action}</li>" for action in phase['actions']])}
-                </ul>
-            </div>
-            """, unsafe_allow_html=True)
-        
-        # Symptoms and identification
-        st.markdown("### 🔍 Symptoms & Identification")
-        
-        symptoms_cols = st.columns(2)
-        with symptoms_cols[0]:
-            st.markdown(f"""
-            <div class="feature-card">
-                <h4>🔍 Common Symptoms</h4>
-                <ul>
-                    {"".join([f"<li>{symptom}</li>" for symptom in disease_data['symptoms']])}
-                </ul>
-            </div>
-            """, unsafe_allow_html=True)
-        
-        with symptoms_cols[1]:
-            st.markdown(f"""
-            <div class="feature-card">
-                <h4>⚠️ Root Causes</h4>
-                <ul>
-                    {"".join([f"<li>{cause}</li>" for cause in disease_data['causes']])}
-                </ul>
-            </div>
-            """, unsafe_allow_html=True)
-        
-        # Prevention strategies
-        st.markdown("### 🛡️ Prevention Strategies")
-        
-        prevention_strategies = {
-            "Healthy": [
-                "Maintain consistent watering schedule",
-                "Provide adequate light conditions",
-                "Regular plant health inspections",
-                "Proper soil drainage",
-                "Appropriate fertilization"
-            ],
-            "Rust": [
-                "Ensure good air circulation around plants",
-                "Avoid overhead watering",
-                "Remove plant debris regularly",
-                "Don't overcrowd plants",
-                "Use drip irrigation when possible"
-            ],
-            "Scab": [
-                "Improve soil drainage",
-                "Water at soil level, not leaves",
-                "Remove fallen leaves promptly",
-                "Avoid working with wet plants",
-                "Use disease-resistant varieties"
-            ],
-            "Multiple Diseases": [
-                "Implement strict sanitation protocols",
-                "Quarantine new plants before introducing",
-                "Use sterilized tools for pruning",
-                "Monitor environmental conditions closely",
-                "Regular application of preventive treatments"
-            ]
-        }
-        
-        strategies = prevention_strategies.get(selected_disease, prevention_strategies["Healthy"])
-        
-        prevention_cols = st.columns(2)
-        for i, strategy in enumerate(strategies):
-            with prevention_cols[i % 2]:
-                st.markdown(f"""
-                <div class="feature-card">
-                    <h5>🛡️ Strategy {i+1}</h5>
-                    <p>{strategy}</p>
-                </div>
-                """, unsafe_allow_html=True)
+        st.markdown("### 🌿 Multiple Diseases")
+        st.markdown("""
+        **Immediate Actions:**
+        - 🔍 Identify specific diseases
+        - 🚰 Improve drainage systems
+        - 🌬️ Increase airflow around plants
+        - 💧 Reduce watering frequency
+        - 🏥 Consult plant pathologist
+        """)
     
     with col2:
-        # Treatment effectiveness visualization
-        st.markdown("### 📊 Treatment Analytics")
+        st.markdown("### 🍂 Rust Disease")
+        st.markdown("""
+        **Symptoms:**
+        - Yellow-orange pustules
+        - Rusty spots on leaf undersides
+        - Weakened plant structure
         
-        # Success rates comparison
-        success_rates = {disease: info['success_rate'] for disease, info in disease_info.items()}
+        **Treatment Protocol:**
+        1. 🧪 Apply sulfur-based fungicide
+        2. 🌡️ Reduce humidity levels
+        3. ☀️ Ensure adequate sunlight
+        4. 🗑️ Remove infected plant parts
+        """)
         
-        fig_success = px.bar(
-            x=list(success_rates.keys()),
-            y=list(success_rates.values()),
-            title="Treatment Success Rates",
-            color=list(success_rates.values()),
-            color_continuous_scale="RdYlGn",
-            labels={'x': 'Disease', 'y': 'Success Rate (%)'}
-        )
-        st.plotly_chart(fig_success, use_container_width=True)
-        
-        # Severity levels
-        severity_levels = {disease: info['severity_level'] for disease, info in disease_info.items()}
-        
-        fig_severity = px.bar(
-            x=list(severity_levels.keys()),
-            y=list(severity_levels.values()),
-            title="Disease Severity Levels",
-            color=list(severity_levels.values()),
-            color_continuous_scale="RdYlBu_r",
-            labels={'x': 'Disease', 'y': 'Severity Level'}
-        )
-        st.plotly_chart(fig_severity, use_container_width=True)
-        
-        # Treatment timeline for selected disease
-        if selected_disease != "Healthy":
-            st.markdown("### ⏰ Treatment Timeline")
-            
-            timeline_data = []
-            phases = treatment_phases.get(selected_disease, [])
-            
-            for i, phase in enumerate(phases):
-                timeline_data.append({
-                    "Phase": f"Phase {i+1}",
-                    "Duration": phase['duration'],
-                    "Actions": len(phase['actions'])
-                })
-            
-            if timeline_data:
-                timeline_df = pd.DataFrame(timeline_data)
-                st.dataframe(timeline_df, use_container_width=True)
-        
-        # Quick reference guide
-        st.markdown("### 📋 Quick Reference")
-        
-        quick_ref = {
-            "Emergency Signs": ["Rapid wilting", "Extensive discoloration", "Spreading symptoms"],
-            "When to Seek Help": ["Multiple symptoms", "Treatment not working", "Rapid deterioration"],
-            "Essential Supplies": ["Fungicides", "Pruning tools", "Protective equipment"]
-        }
-        
-        for category, items in quick_ref.items():
-            st.markdown(f"""
-            <div class="feature-card">
-                <h5>{category}</h5>
-                <ul>
-                    {"".join([f"<li>{item}</li>" for item in items])}
-                </ul>
-            </div>
-            """, unsafe_allow_html=True)
-        
-        # Treatment history for user
-        user_treatments = [h for h in st.session_state.history if h['Prediction'] == selected_disease]
-        
-        if user_treatments:
-            st.markdown("### 📚 Your Treatment History")
-            st.metric("Cases Treated", len(user_treatments))
-            
-            if user_treatments:
-                last_treatment = user_treatments[-1]
-                st.markdown(f"""
-                <div class="notification">
-                    <strong>Last Case:</strong> {last_treatment['Timestamp']}<br>
-                    <strong>Confidence:</strong> {last_treatment['Confidence']}<br>
-                    <strong>Model:</strong> {last_treatment['Model']}
-                </div>
-                """, unsafe_allow_html=True)
+        st.markdown("### ✅ Healthy Plants")
+        st.markdown("""
+        **Maintenance Tips:**
+        - 💧 Water at soil level
+        - 🌞 Provide adequate light
+        - 🌿 Regular pruning
+        - 🔍 Weekly health checks
+        - 🌱 Balanced fertilization
+        """)
     
-    # Additional resources section
+    # Treatment calendar
+    st.markdown("### 📅 Treatment Schedule")
+    schedule_data = {
+        'Week': ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+        'Healthy': ['Monitor', 'Fertilize', 'Prune', 'Monitor'],
+        'Rust': ['Fungicide', 'Monitor', 'Reapply', 'Evaluate'],
+        'Scab': ['Fungicide', 'Prune', 'Monitor', 'Preventive'],
+        'Multiple': ['Diagnose', 'Treat', 'Monitor', 'Reassess']
+    }
+    
+    schedule_df = pd.DataFrame(schedule_data)
+    st.dataframe(schedule_df, use_container_width=True)
+    
+    # Additional treatment resources
     st.markdown("---")
-    st.markdown("## 📚 Additional Resources & Expert Tips")
+    st.markdown("### 📚 Additional Resources")
     
     resource_cols = st.columns(3)
     
     with resource_cols[0]:
         st.markdown("""
-        <div class="analysis-container">
-            <h4>📖 Educational Resources</h4>
-            <ul>
-                <li>🌱 Plant Care Best Practices Guide</li>
-                <li>🔬 Disease Identification Manual</li>
-                <li>💧 Optimal Watering Techniques</li>
-                <li>🌞 Light Requirements Database</li>
-                <li>🌡️ Temperature Control Methods</li>
-            </ul>
-        </div>
-        """, unsafe_allow_html=True)
+        **🌱 Organic Treatments:**
+        - Neem oil spray
+        - Baking soda solution
+        - Copper sulfate
+        - Horticultural oils
+        """)
     
     with resource_cols[1]:
         st.markdown("""
-        <div class="analysis-container">
-            <h4>🏥 Emergency Protocols</h4>
-            <ul>
-                <li>🚨 Rapid Response Checklist</li>
-                <li>📞 When to Call Experts</li>
-                <li>🏥 Plant Hospital Locations</li>
-                <li>💊 Emergency Treatment Kit</li>
-                <li>📋 Symptom Documentation</li>
-            </ul>
-        </div>
-        """, unsafe_allow_html=True)
+        **⚠️ Warning Signs:**
+        - Rapid spread of symptoms
+        - Multiple plant infection
+        - Fruit/flower damage
+        - Stunted growth
+        """)
     
     with resource_cols[2]:
         st.markdown("""
-        <div class="analysis-container">
-            <h4>🌿 Organic Alternatives</h4>
-            <ul>
-                <li>🌱 Natural Fungicides</li>
-                <li>🐛 Beneficial Insects</li>
-                <li>🌿 Companion Planting</li>
-                <li>🏺 Homemade Remedies</li>
-                <li>♻️ Sustainable Practices</li>
-            </ul>
-        </div>
-        """, unsafe_allow_html=True)
+        **📞 When to Seek Help:**
+        - Treatment not working
+        - Disease identification unclear
+        - Multiple infections
+        - Valuable plant at risk
+        """)
     
-    # Interactive treatment planner
+    # Treatment effectiveness tracking
+    if 'treatment_history' not in st.session_state:
+        st.session_state.treatment_history = []
+    
     st.markdown("---")
-    st.markdown("### 📅 Personal Treatment Planner")
+    st.markdown("### 📊 Track Treatment Progress")
     
-    planner_cols = st.columns(2)
+    track_cols = st.columns(3)
     
-    with planner_cols[0]:
-        st.markdown("#### 📋 Create Treatment Plan")
-        
-        plant_name = st.text_input("🌱 Plant Name/ID", placeholder="e.g., Tomato Plant #1")
-        treatment_start = st.date_input("📅 Treatment Start Date", datetime.now().date())
-        severity = st.slider("🚨 Severity Assessment", 1, 4, disease_data['severity_level'])
-        notes = st.text_area("📝 Additional Notes", placeholder="Any specific observations or concerns...")
-        
-        if st.button("📋 Create Treatment Plan"):
-            plan = {
+    with track_cols[0]:
+        plant_name = st.text_input("🌱 Plant Name", placeholder="e.g., Tomato Plant #1")
+    
+    with track_cols[1]:
+        treatment_date = st.date_input("📅 Treatment Date")
+    
+    with track_cols[2]:
+        effectiveness = st.slider("📈 Treatment Effectiveness", 0, 100, 50)
+    
+    if st.button("📝 Record Treatment"):
+        if plant_name:
+            treatment_record = {
                 "plant_name": plant_name,
                 "disease": selected_disease,
-                "start_date": treatment_start.strftime("%Y-%m-%d"),
-                "severity": severity,
-                "notes": notes,
-                "created_by": st.session_state.username,
-                "created_at": datetime.now().isoformat()
+                "date": treatment_date.strftime("%Y-%m-%d"),
+                "effectiveness": effectiveness,
+                "timestamp": pd.Timestamp.now()
             }
-            
-            if 'treatment_plans' not in st.session_state:
-                st.session_state.treatment_plans = []
-            
-            st.session_state.treatment_plans.append(plan)
-            st.success("✅ Treatment plan created successfully!")
-    
-    with planner_cols[1]:
-        st.markdown("#### 📊 Your Treatment Plans")
-        
-        if 'treatment_plans' in st.session_state and st.session_state.treatment_plans:
-            user_plans = [p for p in st.session_state.treatment_plans if p['created_by'] == st.session_state.username]
-            
-            if user_plans:
-                for i, plan in enumerate(user_plans[-3:]):  # Show last 3 plans
-                    st.markdown(f"""
-                    <div class="feature-card">
-                        <h5>🌱 {plan['plant_name']}</h5>
-                        <p><strong>Disease:</strong> {plan['disease']}</p>
-                        <p><strong>Start Date:</strong> {plan['start_date']}</p>
-                        <p><strong>Severity:</strong> {plan['severity']}/4</p>
-                        <p><small>{plan['notes'][:50]}...</small></p>
-                    </div>
-                    """, unsafe_allow_html=True)
-            else:
-                st.info("No treatment plans created yet.")
+            st.session_state.treatment_history.append(treatment_record)
+            st.success(f"✅ Treatment recorded for {plant_name}")
         else:
-            st.info("Create your first treatment plan above.")
+            st.error("Please enter a plant name")
+    
+    # Display treatment history
+    if st.session_state.treatment_history:
+        st.markdown("### 📋 Treatment History")
+        history_df = pd.DataFrame(st.session_state.treatment_history)
+        st.dataframe(history_df[['plant_name', 'disease', 'date', 'effectiveness']], use_container_width=True)
+        
+        # Simple analytics
+        if len(history_df) > 0:
+            avg_effectiveness = history_df['effectiveness'].mean()
+            st.metric("Average Treatment Effectiveness", f"{avg_effectiveness:.1f}%")
+
 # --- Analytics/History Page ---
 def show_history():
     """Show prediction history and analytics"""
