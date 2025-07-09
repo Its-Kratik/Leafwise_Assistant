@@ -2291,5 +2291,24 @@ def main():
     elif task == "Batch Analysis":
         show_batch_analysis()
 
+    # Enhanced footer
+    st.markdown("---")
+    st.markdown("""
+    <div style='text-align: center; padding: 2rem; 
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                color: white; border-radius: 15px; margin-top: 2rem;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.1);'>
+        <h3>🌿 Plant Disease AI Assistant </h3>
+        <p>🚀 Enhanced with Modern Features | Made with ❤️ by Kratik Jain</p>
+        <p>⚡ Powered by Streamlit • OpenCV • Scikit-learn • Plotly </p>
+        <div style='margin-top: 1rem; font-size: 0.9rem; opacity: 0.8;'>
+            📊 Total Predictions: {total} | 🌱 Healthy: {healthy} | 🦠 Diseased: {diseased}
+        </div>
+    </div>
+    """.format(
+        total=st.session_state.analytics['total_predictions'],
+        healthy=st.session_state.analytics['healthy_count'],
+        diseased=st.session_state.analytics['disease_count']
+    ), unsafe_allow_html=True)
 if __name__ == "__main__":
     main()
