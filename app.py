@@ -97,12 +97,12 @@ if 'analytics' not in st.session_state:
 def load_models():
     try:
         models = {
-            "Random Forest": joblib.load("plant_disease_rf_model.joblib"),
-            "SVM (RBF Kernel)": joblib.load("plant_disease_svm_model.joblib"),
-            "Gradient Boosting": joblib.load("plant_disease_gb_model.joblib"),
-            "Voting Ensemble": joblib.load("plant_disease_voting_model.joblib"),
-            "KNN": joblib.load("plant_disease_knn_model.joblib"),
-            "Logistic Regression": joblib.load("plant_disease_logreg_model.joblib")
+            "Random Forest": joblib.load("models/plant_disease_rf_model.joblib"),
+            "SVM (RBF Kernel)": joblib.load("models/plant_disease_svm_model.joblib"),
+            "Gradient Boosting": joblib.load("models/plant_disease_gb_model.joblib"),
+            "Voting Ensemble": joblib.load("models/plant_disease_voting_model.joblib"),
+            "KNN": joblib.load("models/plant_disease_knn_model.joblib"),
+            "Logistic Regression": joblib.load("models/plant_disease_logreg_model.joblib")
         }
         return models
     except FileNotFoundError:
