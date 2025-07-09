@@ -2383,7 +2383,7 @@ def show_user_management():
             # Feature toggles
             st.markdown("#### 🔄 Feature Toggles")
             
-            allow_user_registration = st.checkbox("📝 Allow User Registration", True
+            allow_user_registration = st.checkbox("📝 Allow User Registration", True)
 # --- Supporting Functions ---
 def show_analytics():
     """Alias for show_history or enhanced analytics"""
